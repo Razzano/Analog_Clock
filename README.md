@@ -1,1 +1,6 @@
-Displays Draggable/Resizable Analog Clock with Seconds Hand and Light/Dark Themes ( Tampermoney Script )
+Analog Clock
+ * Draggable
+ * Resizable
+ * Smoothe Seconds Hand Movement
+ * Light/Dark Themes Selection Button
+ * Tampermoney Script
