@@ -114,7 +114,7 @@
       border-radius: 6px !important;
       gap: 12px !important;
       width: fit-content !important;
-      margin: 42px 0px 0px 0px !important;
+      margin: 8px 0px 0px 0px !important;
       float: right !important;
     }
     .scaler-reset {
@@ -159,7 +159,7 @@
       cursor: pointer !important;
       font-size: 14px !important;
       padding: 7px 8px !important;
-      margin: 43px 0 0 0 !important;
+      margin: 9px 0 0 0 !important;
       text-align: center !important;
       width: 70px !important;
     }
