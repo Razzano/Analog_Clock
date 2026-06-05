@@ -37,7 +37,7 @@
       width: 100% !important;
       height: 100% !important;
       background: radial-gradient(circle at 50% 50%, #f8f9fa 0%, #e9ecef 100%) !important;
-      border: 16px solid #2c3e50 !important;
+      /*border: 16px solid #2c3e50 !important;*/
       border-radius: 50% !important;
       box-shadow: inset 0 0 25px rgba(0,0,0,0.08), 0 15px 35px rgba(0,0,0,0.25) !important;
     }
