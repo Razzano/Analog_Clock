@@ -4,410 +4,481 @@
 <meta charset="UTF-8">
 <title>Analog Clock</title>
 <style>
-    #analogClock {
-      margin: 0px !important;
-    }
-    #dateTimeContainer > *,
-    #changerContainer > * {
-      pointer-events: auto !important;
-    }
-    #dateTimeContainer.dragged,
-    #changerContainer.dragged {
-      transform: none !important;
-    }
-    .ClockContainer {
-      display: inline-block !important;
-      font-family: system-ui, Arial, sans-serif !important;
-      left: 50px;
-      position: absolute !important;
-      top: 100px;
-      user-select: none !important;
-      z-index: 9999 !important;
-    }
-    .Analog-Bigclock {
-      cursor: move !important;
-      height: var(--clock-size, 260px) !important;
-      width: var(--clock-size, 260px) !important;
-    }
-    .Analog {
+  .ClockContainer {
+    display: inline-block !important;
+    font-family: system-ui, Arial, sans-serif !important;
+    left: 50px;
+    position: absolute !important;
+    top: 100px;
+    user-select: none !important;
+    z-index: 9999 !important;
+  }
+  .Analog-Bigclock {
+    cursor: move !important;
+    height: var(--clock-size, 260px) !important;
+    width: var(--clock-size, 260px) !important;
+  }
+  .Analog {
     background: radial-gradient(circle at 50% 50%, #f8f9fa 0%, #e9ecef 100%) !important;
-      border-radius: 50% !important;
-      box-shadow: inset 0 0 25px rgba(0,0,0,0.08), 0 15px 35px rgba(0,0,0,0.25) !important;
-      height: 100% !important;
-      width: 100% !important;
-    }
-    .Analog-Hour-Hand,
-    .Analog-Minute-Hand,
-    .Analog-Second-Hand {
-      transform-origin: 50% 50% !important;
-    }
-    .Analog-Hour-Hand   {
-      transform: rotate(var(--hourDeg, 0deg)) !important;
-    }
-    .Analog-Minute-Hand {
-      transform: rotate(var(--minuteDeg, 0deg)) !important;
-    }
-    .Analog-Second-Hand {
-      transform: rotate(var(--secondDeg, 0deg)) !important;
-    }
-    .Analog-Hour-Hand {
-      fill: #2c3e50 !important;
-      stroke: #2c3e50 !important;
-      stroke-linecap: round !important;
-      stroke-width: 4 !important;
-    }
-    .Analog-Minute-Hand {
-      fill: #34495e !important;
-      stroke: #34495e !important;
-      stroke-linecap: round !important;
-      stroke-width: 2 !important;
-    }
-    .Analog-Second-Hand {
-      fill: #e74c3c!important;
-      stroke: #e74c3c !important;
-      stroke-linecap: round !important;
-      stroke-width: 1 !important;
-    }
-    .Analog-Number {
-      fill: #2c3e50 !important;
-      font-family: system-ui, Arial, sans-serif !important;
-      font-size: 6.8px !important;
-      font-weight: 700 !important;
-      paint-order: stroke fill !important;
-      stroke: none !important;
-    }
-    .Analog-CenterCutout {
-      fill: #2c3e50 !important;
-      stroke: white !important;
-      stroke-width: 3 !important;
-    }
-    .Analog-Bigclock.dark .Analog {
-      background: radial-gradient(circle at 50% 50%, #2c3e50 0%, #1a252f 100%) !important;
-      border-color: #ecf0f1 !important;
-    }
-    .Analog-Bigclock.dark .Analog-Number {
-      fill: #fff !important;
-    }
-    .Analog-Bigclock.dark .Analog-Hour-Hand,
-    .Analog-Bigclock.dark .Analog-Minute-Hand {
-      fill: #ecf0f1 !important;
-      stroke: #ecf0f1 !important;
-    }
-    .Analog-Bigclock.dark .Analog-Second-Hand {
-      fill: #ff6b6b !important;
-      stroke: #ff6b6b !important;
-    }
-    .Analog-Bigclock.dark .Analog-CenterCutout {
-      fill: #ecf0f1 !important;
-      stroke: #2c3e50 !important;
-    }
-    .ClockThemeToggle {
-      background: #34495e !important;
-      border: none !important;
-      border-radius: 30px !important;
-      color: white !important;
-      cursor: pointer !important;
-      font-size: 14px !important;
-      padding: 8px 10px 9px 10px !important;
-      margin: 9px 0 0 0 !important;
-      text-align: center !important;
-      width: 80px !important;
-    }
-    .scaler-controls {
-      align-items: center !important;
-      background: #34495e !important;
-      border-radius: 30px !important;
-      display: flex !important;
-      float: right !important;
-      gap: 12px !important;
-      justify-content: center !important;
-      margin: 8px 0px 0px 0px !important;
-      padding: 6px 12px 5px 12px !important;
-      width: fit-content !important;
-    }
-    .scaler-reset {
-      background: none !important;
-      border: none !important;
-      color: #7a8287 !important;
-      cursor: pointer !important;
-      font-size: 14px !important;
-      font-weight: 500 !important;
-      margin: 4px !important;
-      padding: 0 !important;
-    }
-    .scaler-reset:hover {
-      color: #ffffff !important;
-    }
-    .scaler-btn {
-      background: none !important;
-      border: none !important;
-      color: #ffffff !important;
-      cursor: pointer !important;
-      font-size: 18px !important;
-      line-height: 1 !important;
-      padding: 0px 4px !important;
-    }
-    .scaler-btn:hover {
-      opacity: 0.8 !important;
-    }
-    .scaler-text {
-      color: #5294e2 !important;
-      cursor: pointer !important;
-      font-size: 14px !important;
-      font-weight: 500 !important;
-      min-width: 45px !important;
-      pointer-events: none !important;
-      text-align: center !important;
-    }
-	.Analog-DateWindow,
-    .Analog-DayWindow {
-      fill: none !important;
-    }
-    .Analog-DateText,
-    .Analog-DayText	{
-      font-size: 5px !important;
-      fill: #000 !important;
-    }
-    .Analog-Bigclock.dark .Analog-DateWindow,
-    .Analog-Bigclock.dark .Analog-DayWindow {
-      fill: none !important;
-    }
-    .Analog-Bigclock.dark .Analog-DateText,
-    .Analog-Bigclock.dark .Analog-DayText {
-      fill: #fff !important;
-    }
+    border-radius: 50% !important;
+    box-shadow: inset 0 0 25px rgba(0,0,0,0.08), 0 15px 35px rgba(0,0,0,0.25) !important;
+     height: 100% !important;
+    width: 100% !important;
+  }
+  .Analog-Hour-Hand,
+  .Analog-Minute-Hand,
+  .Analog-Second-Hand {
+    transform-origin: 50% 50% !important;
+  }
+  .Analog-Hour-Hand   {
+    transform: rotate(var(--hourDeg, 0deg)) !important;
+  }
+  .Analog-Minute-Hand {
+    transform: rotate(var(--minuteDeg, 0deg)) !important;
+  }
+  .Analog-Second-Hand {
+    transform: rotate(var(--secondDeg, 0deg)) !important;
+  }
+  .Analog-Hour-Hand {
+    fill: #2c3e50 !important;
+    stroke: #2c3e50 !important;
+    stroke-linecap: round !important;
+    stroke-width: 3 !important;
+  }
+  .Analog-Minute-Hand {
+    fill: #34495e !important;
+    stroke: #34495e !important;
+    stroke-linecap: round !important;
+    stroke-width: 2 !important;
+  }
+  .Analog-Second-Hand {
+    fill: #e74c3c!important;
+    stroke: #e74c3c !important;
+    stroke-linecap: round !important;
+    stroke-width: 1 !important;
+  }
+  .Analog-Number {
+    fill: #2c3e50 !important;
+    font-family: system-ui, Arial, sans-serif !important;
+    font-size: 6.8px !important;
+    font-weight: 700 !important;
+    paint-order: stroke fill !important;
+    stroke: none !important;
+  }
+  .Analog-CenterCutout {
+    fill: #2c3e50 !important;
+    stroke: white !important;
+    stroke-width: 3 !important;
+  }
+  .Analog-Bigclock.dark .Analog {
+    background: radial-gradient(circle at 50% 50%, #2c3e50 0%, #1a252f 100%) !important;
+    border-color: #ecf0f1 !important;
+  }
+  .Analog-Bigclock.dark .Analog-Hour-Hand,
+  .Analog-Bigclock.dark .Analog-Minute-Hand {
+    fill: #ecf0f1 !important;
+    stroke: #ecf0f1 !important;
+  }
+  .Analog-Bigclock.dark .Analog-Second-Hand {
+    fill: #ff6b6b !important;
+    stroke: #ff6b6b !important;
+  }
+  .Analog-Bigclock.dark .Analog-Number {
+    fill: #fff !important;
+  }
+  .Analog-Bigclock.dark .Analog-CenterCutout {
+    fill: #ecf0f1 !important;
+    stroke: #2c3e50 !important;
+  }
+  .Analog-DateText,
+  .Analog-DayText,
+  .Analog-AMPMText {
+    font-size: 6px !important;
+    fill: #000 !important;
+  }
+  .Analog-DateWindow,
+  .Analog-DayWindow {
+    fill: none !important;
+  }
+  .Analog-Bigclock.dark .Analog-DateText,
+  .Analog-Bigclock.dark .Analog-DayText,
+  .Analog-Bigclock.dark .Analog-AMPMText {
+    fill: #fff !important;
+  }
+  .Analog-Bigclock.dark .Analog-DateWindow,
+  .Analog-Bigclock.dark .Analog-DayWindow {
+    fill: none !important;
+  }
+  .Analog-Bigclock.dark .Analog-DateText,
+  .Analog-Bigclock.dark .Analog-DayText {
+    fill: #fff !important;
+  }
+  .Analog-AMPMText {
+    font-size: 6px !important;
+    fill: #0078d7 !important;
+  }
+  .Analog-Bigclock.dark .Analog-AMPMText {
+    fill: #4da3ff !important;
+  }
+  .ClockThemeToggle {
+    background: #34495e !important;
+    border: none !important;
+    border-radius: 30px !important;
+    color: white !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+	margin: 9px 0 0 0 !important;
+    padding: 8px 10px 9px 10px !important;
+    text-align: center !important;
+    width: 80px !important;
+  }
+  .scaler-controls {
+    align-items: center !important;
+    background: #34495e !important;
+    border-radius: 30px !important;
+    display: flex !important;
+    float: right !important;
+    gap: 12px !important;
+    justify-content: center !important;
+    margin: 8px 0px 0px 0px !important;
+    padding: 6px 12px 5px 12px !important;
+    width: fit-content !important;
+  }
+  .scaler-reset {
+    background: none !important;
+    border: none !important;
+    color: #7a8287 !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    margin: 4px !important;
+    padding: 0 !important;
+  }
+  .scaler-reset:hover {
+    color: #ffffff !important;
+  }
+  .scaler-btn {
+    background: none !important;
+    border: none !important;
+    color: #ffffff !important;
+    cursor: pointer !important;
+    font-size: 18px !important;
+    line-height: 1 !important;
+    padding: 0px 4px !important;
+  }
+  .scaler-btn:hover {
+    opacity: 0.8 !important;
+  }
+  .scaler-text {
+    background: rgba(255,255,255,.1) !important;
+    border: 1px solid #666 !important;
+    border-radius: 4px !important;
+    color: #5294e2 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+	padding: 2px 4px !important;
+    text-align: center !important;
+    width: 55px !important;
+  }
+  .scaler-text::-webkit-inner-spin-button,
+  .scaler-text::-webkit-outer-spin-button {
+    display: none !important;
+  }
 </style>
 </head>
 <body>
 
 <script>
-    const $x = (tag, props = {}, ...children) => {
-      const svgTags = ['svg','g','path','circle','text','line', 'rect'];
-      const el = document.createElementNS(
-        svgTags.includes(tag) ? 'http://www.w3.org/2000/svg' : 'http://www.w3.org/1999/xhtml',
-        tag
-      );
-      if (props.className) el.setAttribute('class', props.className);
-      if (props.style) Object.assign(el.style, props.style);
-      if (props.textContent !== undefined) el.textContent = props.textContent;
-      Object.keys(props).forEach(key => {
-        if (!['className','style','textContent','onclick'].includes(key)) {
-          el.setAttribute(key, props[key]);
-        }
-      });
-      if (props.onclick) el.onclick = props.onclick;
-      children.flat().forEach(child => child && el.appendChild(child));
-      return el;
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  const SVG_TAGS = new Set([
+    "svg","g","path","circle","text","line","rect","polyline","polygon",
+    "foreignObject","defs","marker","stop","use"
+  ]);
+  const $el = (tag, props = {}, ...children) => {
+  const isSVG = SVG_TAGS.has(tag);
+  const el = isSVG
+    ? document.createElementNS(SVG_NS, tag)
+    : document.createElement(tag);
+  for (const [key, value] of Object.entries(props)) {
+    if (value == null) continue;
+    if (key.startsWith("on") && typeof value === "function") {
+      el.addEventListener(key.slice(2).toLowerCase(), value);
+      continue;
     }
-    const ticks = [];
-    const hourNumbers = [];
-    for (let i = 0; i < 60; i++) {
-      const angleDeg = i * 6 - 90;
-      const rad = angleDeg * Math.PI / 180;
-      const isHourMark = (i % 5 === 0);
-      const innerRadius = isHourMark ? 42 : 44.5;
-      const outerRadius = 47;
-      const isQuarter = (i % 15 === 0);
-      ticks.push($x('line', {
+    if (key === "className" || key === "class") {
+      el.setAttribute("class", Array.isArray(value) ? value.join(" ") : value);
+      continue;
+    }
+    if (key === "style" && typeof value === "object") {
+      Object.assign(el.style, value);
+      continue;
+    }
+    if (key === "textContent") {
+      el.textContent = value;
+      continue;
+    }
+    if (isSVG) {
+      el.setAttribute(key, value);
+      continue;
+    }
+    if (key in el) {
+      el[key] = value;
+    } else {
+      el.setAttribute(key, value);
+  } }
+  children.flat(Infinity).forEach(child => {
+    if (child == null) return;
+    el.appendChild(
+      child instanceof Node
+        ? child
+        : document.createTextNode(child)
+      );
+    });
+    return el;
+  };
+  // ============ Drag ============
+  const makeDraggable = (elmnt, storageKey, dragSelector = null) => {
+    let startX, startY, startLeft, startTop;
+    let isDragging = false;
+    const dragMouseDown = (e) => {
+      if (dragSelector) {
+        if (!e.target.closest(dragSelector)) return;
+      } else {
+        if (e.target.closest('button,input,select,textarea')) return;
+      }
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      if (elmnt.style.position !== 'fixed') {
+        const rect = elmnt.getBoundingClientRect();
+        elmnt.style.position = 'fixed';
+        elmnt.style.left = rect.left + 'px';
+        elmnt.style.top = rect.top + 'px';
+        elmnt.style.transform = 'none';
+        elmnt.classList.add('dragged');
+      }
+      startX = e.clientX;
+      startY = e.clientY;
+      startLeft = parseFloat(elmnt.style.left) || 0;
+      startTop = parseFloat(elmnt.style.top) || 0;
+      isDragging = true;
+      document.addEventListener('mousemove', elementDrag, { passive: false });
+      document.addEventListener('mouseup', closeDragElement, { once: true });
+    };
+    const elementDrag = (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      let newLeft = startLeft + dx;
+      let newTop = startTop + dy;
+      newLeft = Math.max(
+        0,
+        Math.min(
+          newLeft,
+          window.innerWidth - elmnt.offsetWidth
+        )
+      );
+      newTop = Math.max(
+        0,
+        Math.min(
+          newTop,
+          window.innerHeight - elmnt.offsetHeight
+        )
+      );
+      elmnt.style.left = `${newLeft}px`;
+      elmnt.style.top = `${newTop}px`;
+    };
+    const closeDragElement = () => {
+      isDragging = false;
+      document.removeEventListener('mousemove', elementDrag);
+      localStorage.setItem(storageKey + '_top', elmnt.style.top);
+      localStorage.setItem(storageKey + '_left', elmnt.style.left);
+      console.log('✅ Position saved for', elmnt.id);
+    };
+    elmnt.style.cursor = 'move';
+    elmnt.style.userSelect = 'none';
+    elmnt.addEventListener('mousedown', dragMouseDown);
+  };
+  const restorePosition = (el, key) => {
+    const savedTop = localStorage.getItem(key + '_top');
+    const savedLeft = localStorage.getItem(key + '_left');
+    if (savedTop && savedLeft) {
+      el.style.top = savedTop;
+      el.style.left = savedLeft;
+      el.style.transform = 'none';
+    }
+  };
+  const ticks = [];
+  const hourNumbers = [];
+  for (let i = 0; i < 60; i++) {
+    const angleDeg = i * 6 - 90;
+    const rad = angleDeg * Math.PI / 180;
+    const isHourMark = (i % 5 === 0);
+    const innerRadius = isHourMark ? 42 : 44.5;
+    const outerRadius = 47;
+    ticks.push(
+      $el('line', {
         x1: 50 + innerRadius * Math.cos(rad),
         y1: 50 + innerRadius * Math.sin(rad),
         x2: 50 + outerRadius * Math.cos(rad),
         y2: 50 + outerRadius * Math.sin(rad),
         stroke: isHourMark ? '#2c3e50' : '#7f8c8d',
-        'stroke-width': isHourMark ? '1.5' : '0.75',
-        'stroke-linecap': 'round'
-      }));
-    }
-    for (let i = 0; i < 12; i++) {
-      const hour = i === 0 ? 12 : i;
-      const angleDeg = i * 30 - 90;
-      const rad = angleDeg * Math.PI / 180;
-      const radius = 37;
-      hourNumbers.push($x('text', {
-        className: 'Analog-Number',
-        x: (50 + radius * Math.cos(rad)).toFixed(3),
-        y: (50 + radius * Math.sin(rad) + 2.8).toFixed(3),
-        textContent: hour,
-        'text-anchor': 'middle',
-        'dominant-baseline': 'middle'
-      }));
-    }
-    const dateText = $x('text', {
-      className: 'Analog-DateText',
-      x: 50,
-      y: 70,
+        strokeWidth: isHourMark ? '1.5' : '0.75',
+        strokeLinecap: 'round'
+      })
+    );
+  }
+  for (let i = 0; i < 12; i++) {
+    const hour = i === 0 ? 12 : i;
+    const angleDeg = i * 30 - 90;
+    const rad = angleDeg * Math.PI / 180;
+    const radius = 37;
+    hourNumbers.push($el('text', {
+      className: 'Analog-Number',
+      x: (50 + radius * Math.cos(rad)).toFixed(3),
+      y: (48 + radius * Math.sin(rad) + 2.8).toFixed(3),
+      textContent: hour,
       'text-anchor': 'middle',
       'dominant-baseline': 'middle'
-    });
-    const dayText = $x('text', {
-      className: 'Analog-DayText',
-      x: 50,
-      y: 63,
-      'text-anchor': 'middle',
-      'dominant-baseline': 'middle'
-    });
-    const svg = $x('svg', { className: 'Analog', viewBox: '0 0 100 100' },
-      $x('circle', {
-        cx: 50,
-        cy: 50,
-        r: 47,
-        fill: 'none',
-        stroke: '#ccc',
-        'stroke-width': 2
-      }),
-      ...ticks,
-      ...hourNumbers,
-      // Date box
-      /*$x('rect', {
-        className: 'Analog-DateWindow',
-        x: 35,
-        y: 65,
-        width: 30,
-        height: 8,
-        rx: 2
-      }),*/
-      dateText,
-      // Day box
-      /*$x('rect', {
-        className: 'Analog-DayWindow',
-        x: 36,
-        y: 58,
-        width: 28,
-        height: 8,
-        rx: 2
-      }),*/
-      dayText,
-      $x('line', { className:'Analog-Hour-Hand', x1:50,y1:50,x2:50,y2:30 }),
-      $x('line', { className:'Analog-Minute-Hand', x1:50,y1:50,x2:50,y2:22 }),
-      $x('line', { className:'Analog-Second-Hand', x1:50,y1:55,x2:50,y2:15 }),
-      $x('circle', { className:'Analog-CenterCutout', cx:50, cy:50, r:3 })
-    );
-    const Clock = $x('div', { className: 'Analog-Bigclock' }, svg);
-    const BASE_SIZE = 260;
-    let currentPercent = 100;
-    const percentageDisplay = $x('span', { className: 'scaler-text', textContent: '100 %' });
-    const setClockPercentage = (percent) => {
-      currentPercent = Math.max(40, Math.min(200, percent));
-      const pixelSize = Math.round((currentPercent / 100) * BASE_SIZE);
-      Clock.style.setProperty('--clock-size', pixelSize + 'px');
-      percentageDisplay.textContent = currentPercent + ' %';
-      localStorage.setItem('clockSizePercent', currentPercent);
+    }));
+  }
+  const dateText = $el('text', {
+    className: 'Analog-DateText',
+    x: 35,
+    y: 70,
+    textAnchor: 'middle',
+    dominantBaseline: 'middle'
+  });
+  const dayText = $el('text', {
+    className: 'Analog-DayText',
+    x: 40,
+    y: 63,
+    textAnchor: 'middle',
+    dominantBaseline: 'middle'
+  });
+  const ampmText = $el('text', {
+    className: 'Analog-AMPMText',
+    x: 45,
+    y: 77,
+    textAnchor: 'middle',
+    dominantBaseline: 'middle'
+  });
+  const svg = $el('svg', { className: 'Analog', viewBox: '0 0 100 100' },
+    $el('circle', {
+      cx: 50,
+      cy: 50,
+      r: 47,
+      fill: 'none',
+      stroke: '#ccc',
+      strokeWidth: 2
+    }),
+    ...ticks,
+    ...hourNumbers,
+    dateText,
+    dayText,
+    ampmText,
+    $el('line', { className: 'Analog-Hour-Hand', x1: 50, y1: 50, x2: 50, y2: 30 }),
+    $el('line', { className: 'Analog-Minute-Hand', x1: 50, y1: 50, x2: 50, y2: 22 }),
+    $el('line', { className: 'Analog-Second-Hand', x1: 50, y1: 55, x2: 50, y2: 15 }),
+    $el('circle', { className: 'Analog-CenterCutout', cx: 50, cy: 50, r: 3 })
+  );
+  const Clock = $el('div', { className: 'Analog-Bigclock' }, svg);
+  const BASE_SIZE = 260;
+  let currentPercent = 100;
+  const percentageDisplay = $el('input', {
+    className: 'scaler-text',
+    type: 'number',
+    value: '100',
+    min: '40',
+    max: '200',
+    step: '1',
+    oninput(e) {
+      const val = e.target.value;
+      if (val === '') return;
+      const num = parseInt(val, 10);
+      if (!isNaN(num)) {
+        currentPercent = Math.max(40, Math.min(200, num));
+        Clock.style.setProperty('--clock-size', Math.round((currentPercent / 100) * BASE_SIZE) + 'px');
+    } }
+  });
+  const setClockPercentage = (percent) => {
+    currentPercent = Math.max(40, Math.min(200, percent));
+    const pixelSize = Math.round((currentPercent / 100) * BASE_SIZE);
+    console.log('Setting clock size:', currentPercent, pixelSize + 'px');
+    Clock.style.setProperty('--clock-size', pixelSize + 'px');
+    percentageDisplay.value = String(currentPercent);
+    localStorage.setItem('clockSizePercent', currentPercent);
+  };
+  const scalerControls = $el('div', { className: 'scaler-controls' },
+    $el('button', {
+      className: 'scaler-reset',
+      textContent: 'Reset',
+      onclick: () => setClockPercentage(100)
+    }),
+    $el('button', {
+      className: 'scaler-btn',
+      textContent: '-',
+      onclick: () => setClockPercentage(currentPercent - 5)
+    }),
+    percentageDisplay,
+    $el('button', {
+      className: 'scaler-btn',
+      textContent: '+',
+      onclick: () => setClockPercentage(currentPercent + 5)
+    })
+  );
+  const themeBtn = $el('button', {
+    className: 'ClockThemeToggle',
+    textContent: '🌙 Dark',
+    onclick() {
+      const dark = Clock.classList.toggle('dark');
+      themeBtn.textContent = dark ? '☀️ Light' : '🌙 Dark';
     }
-    const scalerControls = $x('div', { className: 'scaler-controls' },
-      $x('button', { className: 'scaler-reset', textContent: 'Reset', onclick: () => setClockPercentage(100) }),
-      $x('button', { className: 'scaler-btn', textContent: '-', onclick: () => setClockPercentage(currentPercent - 5) }),
-      percentageDisplay,
-      $x('button', { className: 'scaler-btn', textContent: '+', onclick: () => setClockPercentage(currentPercent + 5) })
-    );
-    const themeBtn = $x('button', {
-      className: 'ClockThemeToggle',
-      textContent: '🌙 Dark',
-      onclick() {
-        const dark = Clock.classList.toggle('dark');
-        themeBtn.textContent = dark ? '☀️ Light' : '🌙 Dark';
-      }
-    });
-    const savedPercent = localStorage.getItem('clockSizePercent');
-    if (savedPercent) {
-      setClockPercentage(parseInt(savedPercent, 10));
-    } else {
-      setClockPercentage(100);
-    }
-    const container = $x('div', {id: 'analogClockContainer', className: 'ClockContainer'}, Clock, themeBtn, scalerControls);
-    let isDragging = false;
-    let offsetX = 0, offsetY = 0;
-    const startDrag = (e) => {
-      if (e.target.closest('.ClockThemeToggle') || e.target.closest('.scaler-controls')) return;
-      isDragging = true;
-      const rect = container.getBoundingClientRect();
-      offsetX = e.clientX - rect.left;
-      offsetY = e.clientY - rect.top;
-      container.style.transition = 'none';
-    }
-    const doDrag = (e) => {
-      if (!isDragging) return;
-      e.preventDefault();
-      let left = e.clientX - offsetX;
-      let top = e.clientY - offsetY;
-      left = Math.max(
-        0,
-        Math.min(left, window.innerWidth - container.offsetWidth)
-      );
-      top = Math.max(
-        0,
-        Math.min(top, window.innerHeight - container.offsetHeight)
-      );
-      container.style.left = `${left}px`;
-      container.style.top = `${top}px`;
-    };
-    const stopDrag = () => {
-      if (!isDragging) return;
-      isDragging = false;
-      const left = Math.max(0, parseInt(container.style.left, 10) || 0);
-      const top = Math.max(0, parseInt(container.style.top, 10) || 0);
-      localStorage.setItem(
-        'clockPosition',
-        JSON.stringify({ left, top })
-      );
-    };
-    const savedPos = localStorage.getItem('clockPosition');
-    if (savedPos) {
-      const pos = JSON.parse(savedPos);
-      const left = Math.max(
-        0,
-        Math.min(pos.left, window.innerWidth - container.offsetWidth)
-      );
-      const top = Math.max(
-        0,
-        Math.min(pos.top, window.innerHeight - container.offsetHeight)
-      );
-      container.style.left = `${left}px`;
-      container.style.top = `${top}px`;
-    }
-    container.addEventListener('mousedown', startDrag);
-    document.addEventListener('mousemove', doDrag);
-    document.addEventListener('mouseup', stopDrag);
-    container.addEventListener('touchstart', e => {
-      if (e.target.closest('.ClockThemeToggle') || e.target.closest('.scaler-controls')) return;
-      const touch = e.touches[0];
-      startDrag({ clientX: touch.clientX, clientY: touch.clientY, target: e.target });
-    });
-    document.addEventListener('touchmove', e => {
-      if (isDragging) {
-        const touch = e.touches[0];
-        doDrag({ clientX: touch.clientX, clientY: touch.clientY });
-      }
-    });
-    document.addEventListener('touchend', stopDrag);
-    document.body.appendChild(container);
-    let displayedSecondDeg = 0;
-    const updateClock = () => {
-      const now = new Date();
-      const seconds = now.getSeconds() + now.getMilliseconds() / 1000;
-      const secondDeg = seconds * 6;
-      Clock.style.setProperty('--secondDeg', `${secondDeg}deg`);
-      let targetDeg = seconds * 6;
-      if (targetDeg < displayedSecondDeg - 180) targetDeg += 360;
-      displayedSecondDeg = targetDeg;
-      const minuteDeg = now.getMinutes() * 6 + seconds * 0.1;
-      const hourDeg = (now.getHours() % 12) * 30 + now.getMinutes() * 0.5 + seconds * (0.5 / 60);
-      Clock.style.setProperty('--secondDeg', `${displayedSecondDeg}deg`);
-      Clock.style.setProperty('--minuteDeg', `${minuteDeg}deg`);
-      Clock.style.setProperty('--hourDeg', `${hourDeg}deg`);
-      dateText.textContent = `${String(now.getMonth() + 1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')}/`+now.getFullYear();
-      const dayNames = [
-        'Sunday',
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday'
-      ];
-	  dayText.textContent = dayNames[now.getDay()];
-    }
-    setInterval(updateClock, 16);
-    updateClock();
+  });
+  const savedPercent = localStorage.getItem('clockSizePercent');
+  if (savedPercent) {
+    setClockPercentage(parseInt(savedPercent, 10));
+  } else {
+    setClockPercentage(100);
+  }
+  const container = $el(
+    'div',
+    { id: 'analogClockContainer', className: 'ClockContainer' },
+    Clock,
+    themeBtn,
+    scalerControls
+  );
+  makeDraggable(container, 'analogClockContainer', '.Analog-Bigclock');
+  restorePosition(container, 'analogClockContainer');
+  document.body.appendChild(container);
+  let displayedSecondDeg = 0;
+  const updateClock = () => {
+    const now = new Date();
+    const seconds = now.getSeconds() + now.getMilliseconds() / 1000;
+    const secondDeg = seconds * 6;
+    let targetDeg = secondDeg;
+    if (targetDeg < displayedSecondDeg - 180) targetDeg += 360;
+    displayedSecondDeg = targetDeg;
+    const minuteDeg = now.getMinutes() * 6 + seconds * 0.1;
+    const hourDeg =
+      (now.getHours() % 12) * 30 +
+      now.getMinutes() * 0.5 +
+      seconds * (0.5 / 60);
+    Clock.style.setProperty('--secondDeg', `${displayedSecondDeg}deg`);
+    Clock.style.setProperty('--minuteDeg', `${minuteDeg}deg`);
+    Clock.style.setProperty('--hourDeg', `${hourDeg}deg`);
+    dateText.textContent =
+      `${String(now.getMonth() + 1).padStart(2, '0')}/` +
+      `${String(now.getDate()).padStart(2, '0')}/` +
+      now.getFullYear();
+    const dayNames = [
+      'Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'
+    ];
+    dayText.textContent = dayNames[now.getDay()];
+    ampmText.textContent = now.getHours() < 12 ? 'AM' : 'PM';
+  };
+  setInterval(updateClock, 16);
+  updateClock();
 </script>
 </body>
 </html>
