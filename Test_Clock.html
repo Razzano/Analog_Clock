@@ -159,24 +159,22 @@
       pointer-events: none !important;
       text-align: center !important;
     }
-    .Analog-Date-Window {
-      background: transparent !important;
-      border: none !important;
-      fill: none;
+	.Analog-DateWindow,
+    .Analog-DayWindow {
+      fill: none !important;
     }
-    .Analog-Date-Text {
-      fill: #2c3e50;
-      font-size: 5px;
-      font-weight: 700;
-      font-family: monospace;
+    .Analog-DateText,
+    .Analog-DayText	{
+      font-size: 5px !important;
+      fill: #000 !important;
     }
-    .Analog-Bigclock.dark .Analog-Date-Window {
-      background: transparent !important;
-      border: none !important;
-      fill: none;
+    .Analog-Bigclock.dark .Analog-DateWindow,
+    .Analog-Bigclock.dark .Analog-DayWindow {
+      fill: none !important;
     }
-    .Analog-Bigclock.dark .Analog-Date-Text {
-      fill: #ecf0f1;
+    .Analog-Bigclock.dark .Analog-DateText,
+    .Analog-Bigclock.dark .Analog-DayText {
+      fill: #fff !important;
     }
 </style>
 </head>
@@ -234,32 +232,55 @@
         'dominant-baseline': 'middle'
       }));
     }
-    const dateWindow = $x('rect', {
-      className: 'Analog-Date-Window',
-      x: 28,
-      y: 62,
-      width: 44,
-      height: 10,
-      rx: 2,
-      ry: 2
-    });
     const dateText = $x('text', {
-      className: 'Analog-Date-Text',
+      className: 'Analog-DateText',
       x: 50,
-      y: 67,
+      y: 70,
+      'text-anchor': 'middle',
+      'dominant-baseline': 'middle'
+    });
+    const dayText = $x('text', {
+      className: 'Analog-DayText',
+      x: 50,
+      y: 63,
       'text-anchor': 'middle',
       'dominant-baseline': 'middle'
     });
     const svg = $x('svg', { className: 'Analog', viewBox: '0 0 100 100' },
-      $x('circle', { cx: 50, cy: 50, r: 47, fill: 'none', stroke: '#ccc', 'stroke-width': 2 }),
+      $x('circle', {
+        cx: 50,
+        cy: 50,
+        r: 47,
+        fill: 'none',
+        stroke: '#ccc',
+        'stroke-width': 2
+      }),
       ...ticks,
       ...hourNumbers,
-      dateWindow,
+      // Date box
+      /*$x('rect', {
+        className: 'Analog-DateWindow',
+        x: 35,
+        y: 65,
+        width: 30,
+        height: 8,
+        rx: 2
+      }),*/
       dateText,
-      $x('line', { className: 'Analog-Hour-Hand', x1: 50, y1: 50, x2: 50, y2: 30 }),
-      $x('line', { className: 'Analog-Minute-Hand', x1: 50, y1: 50, x2: 50, y2: 22 }),
-      $x('line', { className: 'Analog-Second-Hand', x1: 50, y1: 55, x2: 50, y2: 15 }),
-      $x('circle', { className: 'Analog-CenterCutout', cx: 50, cy: 50, r: 3 })
+      // Day box
+      /*$x('rect', {
+        className: 'Analog-DayWindow',
+        x: 36,
+        y: 58,
+        width: 28,
+        height: 8,
+        rx: 2
+      }),*/
+      dayText,
+      $x('line', { className:'Analog-Hour-Hand', x1:50,y1:50,x2:50,y2:30 }),
+      $x('line', { className:'Analog-Minute-Hand', x1:50,y1:50,x2:50,y2:22 }),
+      $x('line', { className:'Analog-Second-Hand', x1:50,y1:55,x2:50,y2:15 }),
+      $x('circle', { className:'Analog-CenterCutout', cx:50, cy:50, r:3 })
     );
     const Clock = $x('div', { className: 'Analog-Bigclock' }, svg);
     const BASE_SIZE = 260;
@@ -373,10 +394,17 @@
       Clock.style.setProperty('--secondDeg', `${displayedSecondDeg}deg`);
       Clock.style.setProperty('--minuteDeg', `${minuteDeg}deg`);
       Clock.style.setProperty('--hourDeg', `${hourDeg}deg`);
-      dateText.textContent =
-        `${String(now.getMonth() + 1).padStart(2,'0')}/` +
-        `${String(now.getDate()).padStart(2,'0')}/` +
-        now.getFullYear();
+      dateText.textContent = `${String(now.getMonth() + 1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')}/`+now.getFullYear();
+      const dayNames = [
+        'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday'
+      ];
+	  dayText.textContent = dayNames[now.getDay()];
     }
     setInterval(updateClock, 16);
     updateClock();
