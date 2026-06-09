@@ -16,6 +16,7 @@
 
 (() => {
   'use strict';
+
   // ============ Helpers ============
   const SVG_NS = "http://www.w3.org/2000/svg";
   const SVG_TAGS = new Set([
@@ -348,7 +349,7 @@
     .Analog-Second-Hand {
       transform-origin: 50% 50% !important;
     }
-    .Analog-Hour-Hand   {
+    .Analog-Hour-Hand {
       transform: rotate(var(--hourDeg, 0deg)) !important;
     }
     .Analog-Minute-Hand {
@@ -417,7 +418,7 @@
     .Analog-DayWindow {
       fill: none !important;
     }
-    .Analog-Bigclock.dark .Analog-CalendarText
+    .Analog-Bigclock.dark .Analog-CalendarText,
     .Analog-Bigclock.dark .Analog-AMPMText {
       fill: #fff !important;
     }
