@@ -348,7 +348,7 @@
     }
     .Analog {
       background: radial-gradient(circle at 50% 50%, #f8f9fa 0%, #e9ecef 100%);
-      border-radius: 50% !important;
+      border-radius: 50%;
       box-shadow: inset 0 0 25px rgba(0,0,0,0.08), 0 15px 35px rgba(0,0,0,0.25);
       height: 100%;
       width: 100%;
@@ -368,10 +368,10 @@
       transform: rotate(var(--secondDeg, 0deg));
     }
     .Analog-Hour-Hand {
-      fill: #2c3e50 !important;
-      stroke: #2c3e50 !important;
-      stroke-linecap: round !important;
-      stroke-width: 3 !important;
+      fill: #2c3e50;
+      stroke: #2c3e50;
+      stroke-linecap: round;
+      stroke-width: 3;
     }
     .Analog-Minute-Hand {
       fill: #34495e;
@@ -440,7 +440,7 @@
       gap: 12px;
       margin: auto;
       padding: 4px 12px;
-	     text-align: center;
+	  text-align: center;
       width: auto;
     }
     .Analog-CalendarText {
