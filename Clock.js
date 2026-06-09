@@ -49,8 +49,6 @@
     });
     return el;
   };
-
-  // ============ Drag ============
   const makeDraggable = (elmnt, storageKey, dragSelector = null) => {
     let startX, startY, startLeft, startTop;
     let isDragging = false;
@@ -122,7 +120,11 @@
         el.style.transform = 'none';
     }
   };
-
+  const DAY_ABBR = ['Sun.','Mon.','Tue.','Wed.','Thu.','Fri.','Sat.'];
+  const DAY_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MONTH_ABBR = ['Jan.','Feb.','Mar.','Apr.','May','Jun.','Jul.','Aug.','Sep.','Oct.','Nov.','Dec.'];
+  const MONTH_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  
   // ============ Analog Clock ============
   const getClock = () => {
     if (document.getElementById('analogClockContainer')) return;
@@ -160,24 +162,13 @@
         'dominant-baseline': 'middle'
       }));
     }
-    const dateText = $el('text', {
-      className: 'Analog-DateText',
-      x: 35,
-      y: 70,
-      textAnchor: 'middle',
-      dominantBaseline: 'middle'
-    });
-    const dayText = $el('text', {
-      className: 'Analog-DayText',
-      x: 40,
-      y: 63,
-      textAnchor: 'middle',
-      dominantBaseline: 'middle'
+    const calendarText = $el('div', {
+      className: 'Analog-CalendarText'
     });
     const ampmText = $el('text', {
       className: 'Analog-AMPMText',
-      x: 45,
-      y: 77,
+      x: 50,
+      y: 78,
       textAnchor: 'middle',
       dominantBaseline: 'middle'
     });
@@ -192,8 +183,6 @@
       }),
       ...ticks,
       ...hourNumbers,
-      dateText,
-      dayText,
       ampmText,
       $el('line', { className: 'Analog-Hour-Hand', x1: 50, y1: 50, x2: 50, y2: 30 }),
       $el('line', { className: 'Analog-Minute-Hand', x1: 50, y1: 50, x2: 50, y2: 22 }),
@@ -201,7 +190,7 @@
       $el('circle', { className: 'Analog-CenterCutout', cx: 50, cy: 50, r: 3 })
     );
     const Clock = $el('div', { className: 'Analog-Bigclock' }, svg);
-    const BASE_SIZE = 260;
+    const BASE_SIZE = 314;
     let currentPercent = 100;
     const percentageDisplay = $el('input', {
       className: 'scaler-text',
@@ -210,6 +199,7 @@
       min: '40',
       max: '200',
       step: '1',
+      title: 'Min. 40% = 120px Ø\nReset 100% = 300px Ø\nnMax. 200% = 600px Ø',
       oninput(e) {
         const val = e.target.value;
         if (val === '') return;
@@ -227,6 +217,10 @@
       percentageDisplay.value = String(currentPercent);
       localStorage.setItem('clockSizePercent', currentPercent);
     };
+	   const clockInfo = $el( 'div', {
+	     className: 'Analog-Info' },
+      calendarText
+    );
     const scalerControls = $el('div', { className: 'scaler-controls' },
       $el('button', {
         className: 'scaler-reset',
@@ -259,12 +253,18 @@
     } else {
       setClockPercentage(100);
     }
+	   const controlsRow = $el(
+      'div',
+      { className: 'ControlsRow' },
+      themeBtn,
+      scalerControls
+    );
     const container = $el(
       'div',
       { id: 'analogClockContainer', className: 'ClockContainer' },
       Clock,
-      themeBtn,
-      scalerControls
+      clockInfo,
+      controlsRow
     );
     makeDraggable(container, 'analogClockContainer', '.Analog-Bigclock');
     restorePosition(container, 'analogClockContainer');
@@ -272,30 +272,28 @@
     let displayedSecondDeg = 0;
     const updateClock = () => {
       const now = new Date();
+      const dy = now.getDay(), dt = now.getDate(), mth = now.getMonth(), yr = now.getFullYear();
+      const dayAbbr = DAY_ABBR[dy], dayFull = DAY_FULL[dy], monthAbbr = MONTH_ABBR[mth], monthFull = MONTH_FULL[mth];
+      const suffix = ['th', 'st', 'nd', 'rd'][(dt % 10 > 3 || Math.floor(dt / 10) === 1 ? 0 : dt % 10)] || 'th';
+      const ordinal = dt + suffix;
       const seconds = now.getSeconds() + now.getMilliseconds() / 1000;
       const secondDeg = seconds * 6;
       let targetDeg = secondDeg;
       if (targetDeg < displayedSecondDeg - 180) targetDeg += 360;
       displayedSecondDeg = targetDeg;
       const minuteDeg = now.getMinutes() * 6 + seconds * 0.1;
-      const hourDeg =
-        (now.getHours() % 12) * 30 +
-        now.getMinutes() * 0.5 +
-        seconds * (0.5 / 60);
+      const hourDeg = (now.getHours() % 12) * 30 + now.getMinutes() * 0.5 + seconds * (0.5 / 60);
       Clock.style.setProperty('--secondDeg', `${displayedSecondDeg}deg`);
       Clock.style.setProperty('--minuteDeg', `${minuteDeg}deg`);
       Clock.style.setProperty('--hourDeg', `${hourDeg}deg`);
-      dateText.textContent =
-        `${String(now.getMonth() + 1).padStart(2, '0')}/` +
-        `${String(now.getDate()).padStart(2, '0')}/` +
-        now.getFullYear();
-      const dayNames = [
-        'Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'
-      ];
-      dayText.textContent = dayNames[now.getDay()];
-      ampmText.textContent = now.getHours() < 12 ? 'AM' : 'PM';
+      ampmText.textContent = GM_getValue('defaultAMPM', false) ? (now.getHours() < 12 ? 'AM' : 'PM') : '';
+      calendarText.textContent = `${dayFull} ⇒ ${monthFull} ${ordinal}, ${yr}`;
     };
-    setInterval(updateClock, 16);
+    const tick = () => {
+      updateClock();
+      requestAnimationFrame(tick);
+    };
+    tick();
     updateClock();
   };
 
@@ -305,7 +303,9 @@
   // ============ CSS ============
   GM_addStyle(`
     .ClockContainer {
-      display: inline-block !important;
+	  display: flex;
+	  flex-direction: column;
+      align-items: center;
       font-family: system-ui, Arial, sans-serif !important;
       left: 50px;
       position: absolute !important;
@@ -315,8 +315,11 @@
     }
     .Analog-Bigclock {
       cursor: move !important;
-      height: var(--clock-size, 260px) !important;
-      width: var(--clock-size, 260px) !important;
+      width: var(--clock-size);
+      height: var(--clock-size);
+      flex-shrink: 0;
+	  margin: 0 auto;
+	  align-self: center;
     }
     .Analog {
       background: radial-gradient(circle at 50% 50%, #f8f9fa 0%, #e9ecef 100%) !important;
@@ -390,8 +393,7 @@
       fill: #ecf0f1 !important;
       stroke: #2c3e50 !important;
     }
-    .Analog-DateText,
-    .Analog-DayText,
+    .Analog-CalendarText,
     .Analog-AMPMText {
       font-size: 6px !important;
       fill: #000 !important;
@@ -400,8 +402,7 @@
     .Analog-DayWindow {
       fill: none !important;
     }
-    .Analog-Bigclock.dark .Analog-DateText,
-    .Analog-Bigclock.dark .Analog-DayText,
+    .Analog-Bigclock.dark .Analog-CalendarText
     .Analog-Bigclock.dark .Analog-AMPMText {
       fill: #fff !important;
     }
@@ -409,16 +410,12 @@
     .Analog-Bigclock.dark .Analog-DayWindow {
       fill: none !important;
     }
-    .Analog-Bigclock.dark .Analog-DateText,
-    .Analog-Bigclock.dark .Analog-DayText {
+    .Analog-Bigclock.dark .Analog-CalendarText {
       fill: #fff !important;
     }
     .Analog-AMPMText {
       font-size: 6px !important;
       fill: #0078d7 !important;
-    }
-    .Analog-Bigclock.dark .Analog-AMPMText {
-      fill: #4da3ff !important;
     }
     .ClockThemeToggle {
       background: #34495e !important;
@@ -472,17 +469,43 @@
     .scaler-text {
       background: rgba(255,255,255,.1) !important;
       border: 1px solid #666 !important;
-      border-radius: 4px !important;
+      border-radius: 14px !important;
       color: #5294e2 !important;
       font-size: 14px !important;
       font-weight: 500 !important;
       text-align: center !important;
-      width: 55px !important;
-      padding: 2px 4px !important;
+      min-width: 32px !important;
+      padding: 1px 2px 0px 0px !important;
     }
-	   .scaler-text::-webkit-inner-spin-button,
+    .scaler-text:hover,
+    .scaler-text:focus-within {
+      border-color: #ffffff !important;
+      color: #ffffff !important;
+    }
+    .scaler-text::-webkit-inner-spin-button,
     .scaler-text::-webkit-outer-spin-button {
       display: none !important;
+    }
+    .Analog-Info {
+      display: inline-flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      gap: 12px !important;
+      margin: 4px 0px 2px 0px !important;
+	  text-align: center;
+      width: 100% !important;
+    }
+    .Analog-CalendarText {
+      display: inline-block !important;
+      font-size: 16px !important;
+      font-weight: 600 !important;
+      white-space: nowrap !important;
+    }
+    .ControlsRow {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 12px !important;
     }
   `);
 })();
