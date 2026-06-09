@@ -1,6 +1,21 @@
+// ==UserScript==
+// @name         Analog Clock
+// @namespace    tampermonkey
+// @version      1.0.0
+// @description  Draggable & Resizable
+// @author       Sonny Razzano a.k.a. srazzano
+// @match        https://www.google.com/*
+// @match        https://google.com/*
+// @exclude      https://www.google.com/search*
+// @exclude      https://google.com/search*
+// @icon         
+// @grant        GM_addStyle
+// @grant        GM_getValue
+// @grant        GM_setValue
+// ==/UserScript==
+
 (() => {
   'use strict';
-
   // ============ Helpers ============
   const SVG_NS = "http://www.w3.org/2000/svg";
   const SVG_TAGS = new Set([
