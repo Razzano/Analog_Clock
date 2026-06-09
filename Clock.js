@@ -2,13 +2,13 @@
 // @name         Analog Clock
 // @namespace    tampermonkey
 // @version      1.0.0
-// @description  Draggable & Resizable
+// @description  Draggable, Resizable, Dark/Light Themes
 // @author       Sonny Razzano a.k.a. srazzano
 // @match        https://www.google.com/*
 // @match        https://google.com/*
 // @exclude      https://www.google.com/search*
 // @exclude      https://google.com/search*
-// @icon         
+// @icon
 // @grant        GM_addStyle
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -140,7 +140,7 @@
   const DAY_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const MONTH_ABBR = ['Jan.','Feb.','Mar.','Apr.','May','Jun.','Jul.','Aug.','Sep.','Oct.','Nov.','Dec.'];
   const MONTH_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  
+
   // ============ Analog Clock ============
   const getClock = () => {
     if (document.getElementById('analogClockContainer')) return;
@@ -181,10 +181,19 @@
     const calendarText = $el('div', {
       className: 'Analog-CalendarText'
     });
+    const ampmBorder = $el('rect', {
+      className: 'Analog-AMPMBorder',
+      x: 44,
+      y: 75,
+      width: 13,
+      height: 7,
+      rx: 2,
+      ry: 2
+    });
     const ampmText = $el('text', {
       className: 'Analog-AMPMText',
-      x: 50,
-      y: 78,
+      x: 45,
+      y: 81,
       textAnchor: 'middle',
       dominantBaseline: 'middle'
     });
@@ -199,6 +208,7 @@
       }),
       ...ticks,
       ...hourNumbers,
+      ampmBorder,
       ampmText,
       $el('line', { className: 'Analog-Hour-Hand', x1: 50, y1: 50, x2: 50, y2: 30 }),
       $el('line', { className: 'Analog-Minute-Hand', x1: 50, y1: 50, x2: 50, y2: 22 }),
@@ -212,7 +222,7 @@
       className: 'scaler-text',
       type: 'number',
       value: '100',
-      min: '40',
+      min: '30',
       max: '200',
       step: '1',
       title: 'Min. 40% = 120px Ø\nReset 100% = 300px Ø\nnMax. 200% = 600px Ø',
@@ -221,12 +231,11 @@
         if (val === '') return;
         const num = parseInt(val, 10);
         if (!isNaN(num)) {
-          currentPercent = Math.max(40, Math.min(200, num));
-          Clock.style.setProperty('--clock-size', Math.round((currentPercent / 100) * BASE_SIZE) + 'px');
+          setClockPercentage(num);
       } }
     });
     const setClockPercentage = (percent) => {
-      currentPercent = Math.max(40, Math.min(200, percent));
+      currentPercent = Math.max(30, Math.min(200, percent));
       const pixelSize = Math.round((currentPercent / 100) * BASE_SIZE);
       console.log('Setting clock size:', currentPercent, pixelSize + 'px');
       Clock.style.setProperty('--clock-size', pixelSize + 'px');
@@ -319,44 +328,44 @@
   // ============ CSS ============
   GM_addStyle(`
     .ClockContainer {
-	  display: flex;
-	  flex-direction: column;
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      font-family: system-ui, Arial, sans-serif !important;
+      font-family: system-ui, Arial, sans-serif;
       left: 50px;
-      position: absolute !important;
+      position: absolute;
       top: 100px;
-      user-select: none !important;
-      z-index: 9999 !important;
+      user-select: none;
+      z-index: 9999;
     }
     .Analog-Bigclock {
-      cursor: move !important;
+      cursor: move;
       width: var(--clock-size);
       height: var(--clock-size);
       flex-shrink: 0;
-	  margin: 0 auto;
-	  align-self: center;
+      margin: 0 auto;
+      align-self: center;
     }
     .Analog {
-      background: radial-gradient(circle at 50% 50%, #f8f9fa 0%, #e9ecef 100%) !important;
+      background: radial-gradient(circle at 50% 50%, #f8f9fa 0%, #e9ecef 100%);
       border-radius: 50% !important;
-      box-shadow: inset 0 0 25px rgba(0,0,0,0.08), 0 15px 35px rgba(0,0,0,0.25) !important;
-      height: 100% !important;
-      width: 100% !important;
+      box-shadow: inset 0 0 25px rgba(0,0,0,0.08), 0 15px 35px rgba(0,0,0,0.25);
+      height: 100%;
+      width: 100%;
     }
     .Analog-Hour-Hand,
     .Analog-Minute-Hand,
     .Analog-Second-Hand {
-      transform-origin: 50% 50% !important;
+      transform-origin: 50% 50%;
     }
     .Analog-Hour-Hand {
-      transform: rotate(var(--hourDeg, 0deg)) !important;
+      transform: rotate(var(--hourDeg, 0deg));
     }
     .Analog-Minute-Hand {
-      transform: rotate(var(--minuteDeg, 0deg)) !important;
+      transform: rotate(var(--minuteDeg, 0deg));
     }
     .Analog-Second-Hand {
-      transform: rotate(var(--secondDeg, 0deg)) !important;
+      transform: rotate(var(--secondDeg, 0deg));
     }
     .Analog-Hour-Hand {
       fill: #2c3e50 !important;
@@ -365,163 +374,150 @@
       stroke-width: 3 !important;
     }
     .Analog-Minute-Hand {
-      fill: #34495e !important;
-      stroke: #34495e !important;
-      stroke-linecap: round !important;
-      stroke-width: 2 !important;
+      fill: #34495e;
+      stroke: #34495e;
+      stroke-linecap: round;
+      stroke-width: 2;
     }
     .Analog-Second-Hand {
-      fill: #e74c3c!important;
-      stroke: #e74c3c !important;
-      stroke-linecap: round !important;
-      stroke-width: 1 !important;
+      fill: #e74c3c;
+      stroke: #e74c3c;
+      stroke-linecap: round;
+      stroke-width: 1;
     }
     .Analog-Number {
-      fill: #2c3e50 !important;
-      font-family: system-ui, Arial, sans-serif !important;
-      font-size: 6.8px !important;
-      font-weight: 700 !important;
-      paint-order: stroke fill !important;
-      stroke: none !important;
+      fill: #2c3e50;
+      font-family: system-ui, Arial, sans-serif;
+      font-size: 6.8px;
+      font-weight: 700;
+      paint-order: stroke fill;
+      stroke: none;
     }
     .Analog-CenterCutout {
-      fill: #2c3e50 !important;
-      stroke: white !important;
-      stroke-width: 3 !important;
+      fill: #2c3e50;
+      stroke: white;
+      stroke-width: 3;
     }
     .Analog-Bigclock.dark .Analog {
-      background: radial-gradient(circle at 50% 50%, #2c3e50 0%, #1a252f 100%) !important;
-      border-color: #ecf0f1 !important;
+      background: radial-gradient(circle at 50% 50%, #2c3e50 0%, #1a252f 100%);
+      border-color: #ecf0f1;
     }
     .Analog-Bigclock.dark .Analog-Hour-Hand,
     .Analog-Bigclock.dark .Analog-Minute-Hand {
-      fill: #ecf0f1 !important;
-      stroke: #ecf0f1 !important;
+      fill: #ecf0f1;
+      stroke: #ecf0f1;
     }
     .Analog-Bigclock.dark .Analog-Second-Hand {
-      fill: #ff6b6b !important;
-      stroke: #ff6b6b !important;
+      fill: #ff6b6b;
+      stroke: #ff6b6b;
     }
     .Analog-Bigclock.dark .Analog-Number {
-      fill: #fff !important;
+      fill: #fff;
     }
     .Analog-Bigclock.dark .Analog-CenterCutout {
-      fill: #ecf0f1 !important;
-      stroke: #2c3e50 !important;
+      fill: #ecf0f1;
+      stroke: #2c3e50;
     }
-    .Analog-CalendarText,
     .Analog-AMPMText {
-      font-size: 6px !important;
-      fill: #000 !important;
+      font-size: 6px;
+      fill: #0078d7;
     }
-    .Analog-DateWindow,
-    .Analog-DayWindow {
-      fill: none !important;
-    }
-    .Analog-Bigclock.dark .Analog-CalendarText,
     .Analog-Bigclock.dark .Analog-AMPMText {
-      fill: #fff !important;
+      fill: #fff;
     }
-    .Analog-Bigclock.dark .Analog-DateWindow,
-    .Analog-Bigclock.dark .Analog-DayWindow {
-      fill: none !important;
+    .ControlsRow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
     }
-    .Analog-Bigclock.dark .Analog-CalendarText {
-      fill: #fff !important;
+    .Analog-Info {
+      background: #34495e;
+      border-radius: 30px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin: auto;
+      padding: 4px 12px;
+	     text-align: center;
+      width: auto;
     }
-    .Analog-AMPMText {
-      font-size: 6px !important;
-      fill: #0078d7 !important;
+    .Analog-CalendarText {
+      display: inline-block;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      white-space: nowrap;
     }
     .ClockThemeToggle {
-      background: #34495e !important;
-      border: none !important;
-      border-radius: 30px !important;
-      color: white !important;
-      cursor: pointer !important;
-      font-size: 14px !important;
-      padding: 8px 10px 9px 10px !important;
-      margin: 9px 0 0 0 !important;
-      text-align: center !important;
-      width: 80px !important;
+      background: #34495e;
+      border: none;
+      border-radius: 30px;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 8px 10px 9px 10px;
+      margin: 9px 0 0 0;
+      text-align: center;
+      width: 80px;
     }
     .scaler-controls {
-      align-items: center !important;
-      background: #34495e !important;
-      border-radius: 30px !important;
-      display: flex !important;
-      float: right !important;
-      gap: 12px !important;
-      justify-content: center !important;
-      margin: 8px 0px 0px 0px !important;
-      padding: 6px 12px 5px 12px !important;
-      width: fit-content !important;
+      align-items: center;
+      background: #34495e;
+      border-radius: 30px;
+      display: flex;
+      float: right;
+      gap: 12px;
+      justify-content: center;
+      margin: 8px 0px 0px 0px;
+      padding: 6px 12px 5px 12px;
+      width: fit-content;
     }
     .scaler-reset {
-      background: none !important;
-      border: none !important;
-      color: #7a8287 !important;
-      cursor: pointer !important;
-      font-size: 14px !important;
-      font-weight: 500 !important;
-      margin: 4px !important;
-      padding: 0 !important;
+      background: none;
+      border: none;
+      color: #7a8287;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      margin: 4px;
+      padding: 0;
     }
     .scaler-reset:hover {
-      color: #ffffff !important;
+      color: #ffffff;
     }
     .scaler-btn {
-      background: none !important;
-      border: none !important;
-      color: #ffffff !important;
-      cursor: pointer !important;
-      font-size: 18px !important;
-      line-height: 1 !important;
-      padding: 0px 4px !important;
+      background: none;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      padding: 0px 4px;
     }
     .scaler-btn:hover {
-      opacity: 0.8 !important;
+      opacity: 0.8;
     }
     .scaler-text {
-      background: rgba(255,255,255,.1) !important;
-      border: 1px solid #666 !important;
-      border-radius: 14px !important;
-      color: #5294e2 !important;
-      font-size: 14px !important;
-      font-weight: 500 !important;
-      text-align: center !important;
-      min-width: 32px !important;
-      padding: 1px 2px 0px 0px !important;
+      background: rgba(255,255,255,.1);
+      border: 1px solid #666;
+      border-radius: 14px;
+      color: #5294e2;
+      font-size: 14px;
+      font-weight: 500;
+      text-align: center;
+      min-width: 32px;
+      padding: 1px 2px 0px 0px;
     }
     .scaler-text:hover,
     .scaler-text:focus-within {
-      border-color: #ffffff !important;
-      color: #ffffff !important;
+      border-color: #ffffff;
+      color: #ffffff;
     }
     .scaler-text::-webkit-inner-spin-button,
     .scaler-text::-webkit-outer-spin-button {
-      display: none !important;
-    }
-    .Analog-Info {
-      display: inline-flex !important;
-      justify-content: center !important;
-      align-items: center !important;
-      gap: 12px !important;
-      margin: 4px 0px 2px 0px !important;
-	  text-align: center;
-      width: 100% !important;
-    }
-    .Analog-CalendarText {
-      display: inline-block !important;
-      font-size: 16px !important;
-      font-weight: 600 !important;
-      white-space: nowrap !important;
-    }
-    .ControlsRow {
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      gap: 12px !important;
+      display: none;
     }
   `);
 })();
