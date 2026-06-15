@@ -69,17 +69,6 @@
   };
 
   const $id = (id) => document.getElementById(id);
-  const $q = (sel, ctx = document) => ctx?.querySelector(sel) ?? null;
-  const $qa = (sel, ctx = document) => Array.from(ctx?.querySelectorAll(sel) ?? []);
-
-  const insertAfter = (newEl, refEl) => {
-    if (!refEl || !refEl.parentNode) {
-      console.warn('insertAfter: refEl is null or has no parentNode', refEl);
-      return null;
-    }
-    refEl.parentNode.insertBefore(newEl, refEl.nextSibling);
-    return newEl;
-  };
 
   const makeDraggable = (elmnt, storageKey, dragSelector = null) => {
     let startX, startY, startLeft, startTop;
@@ -130,19 +119,6 @@
     elmnt.style.cursor = 'move';
     elmnt.style.userSelect = 'none';
     elmnt.addEventListener('mousedown', dragMouseDown);
-  };
-
-  const prepend = (parent, child) => {
-    parent.insertBefore(child, parent.firstChild);
-    return child;
-  };
-
-  const removeDupes = (className) => {
-    document.querySelectorAll('.' + className).forEach((el, i) => {
-      if (i > 0) {
-        el.remove();
-      }
-    });
   };
 
   const restorePosition = (el, key) => {
@@ -364,250 +340,42 @@
     updateClock();
   };
 
-  // ============ Initiate Clock ============
-  getClock();
+  // ============ Initialize ============
+  const init = () => {
+    document.removeEventListener('DOMContentLoaded', init);
+    const body = document.body;
+    if (!body) return;
+    const showClock = GM_getValue('analogClock', true);
+    const clock = $id('analogClockContainer');
+    if (showClock) {
+      requestAnimationFrame(() => getClock());
+    } else {
+      clock?.remove();
+    }
+  };
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && GM_getValue('analogClock', true)) {
+      if (!$id('analogClockContainer')) {
+        getClock();
+    } }
+  });
+
+  window.addEventListener('pageshow', () => {
+    if (GM_getValue('analogClock', true) && !$id('analogClockContainer')) {
+      getClock();
+    }
+  });
+
+  if (document.readyState === "loading") {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 
   // ============ CSS ============
   GM_addStyle(`
-    body#gWP1 > div.L3eUgb > div.o3j99.n1xJcf.CoM3Df > a.w5hRs,
-    body#gWP1 #gb > div.gb_Q.gb_6.gb_Vf.gb_3f > div:nth-child(2) > a,
-    body#gWP1 #gb > div.gb_Ad.gb_6.gb_L,
-    body#gWP1 > div.L3eUgb > div:nth-child(13) > div > div.KxwPGc.SSwjIe > div.KxwPGc.AghGtd,
-    body#gWP1 > div.L3eUgb > div:nth-child(13) > div > div.KxwPGc.SSwjIe > div.KxwPGc.ssOUyb,
-    body#gWP1 > div.L3eUgb > div:nth-child(13) > div > div.KxwPGc.SSwjIe > div.KxwPGc.iTjxkf > a,
-    body#gWP1 > div.L3eUgb div.RNNXgb div.fzj3ad,
-    body#gWP1 > div.L3eUgb > div.o3j99.qarstb > div:nth-child(3),
-    body#gWP1 #EUjKDc,
-    body#gWP1 #gbqfbb,
-    body#gWP1 #LS8OJ > div.k1zIA.kKvsb > div.IzOpfd,
-    body#gWP1 > div.L3eUgb > div.o3j99.qarstb > div:nth-child(2){
-      display: none !important;
-    }
-    body#gWP1 #gb > div.gb_Q.gb_6.gb_Vf.gb_3f {
-      padding-right: 0px !important;
-    }
-    body#gWP1 header a {
-      color: #FFF !important;
-      text-decoration: none !important;
-    }
-    body#gWP1 header a > svg {
-      fill: #FFF !important;
-    }
-    body#gWP1 {
-      background: url(${_githubSite}GM_getValue(wallpaperImage)}.jpg) no-repeat center center / cover fixed !important;
-    }
-    body#gWP1 > div.L3eUgb > div:nth-child(13) > div {
-      background: transparent !important;
-    }
-    body#gWP1 > div.L3eUgb > div:nth-child(13) > div > div.KxwPGc.SSwjIe {
-      background: transparent !important;
-      float: right !important;
-    }
-    body#gWP1 > div.L3eUgb > div:nth-child(13) > div > div.KxwPGc.SSwjIe > div.KxwPGc.iTjxkf > span > span > g-popup > div.CcNe6e > div {
-      background: rgba(0, 0, 0, .2) !important;
-      border-radius: 6px !important;
-      padding: 8px 16px !important;
-    }
-    body#gWP1 #LS8OJ > div.k1zIA.rSk4se > svg {
-      fill: #FFF !important;
-    }
-    body#gWP1 > div.L3eUgb div.RNNXgb,
-    body#gWP1 > div.L3eUgb input.gNO89b {
-      background: rgba(0,0,0,.2) !important;
-    }
-    body#gWP1 #APjFqb {
-      filter: brightness(2) !important;
-      text-shadow: 1px 1px 2px #000 !important;
-    }
-    #gWP1 > div.L3eUgb div.RNNXgb > div.SDkEP > div.fM33ce.dRYYxd > div.ywK6Rd {
-      background: none !important;
-    }
-    body#gWP1 #gb > div.gb_z > div:nth-child(2) {
-      height: calc(-70px + 100vh) !important;
-    }
-    body#gWP1 #logoGoogle {
-      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)) !important;
-      height: auto !important;
-      left: 50% !important;
-      max-width: 100% !important;
-      opacity: 1 !important;
-      position: absolute !important;
-      top: 0px !important;
-      z-index: 999 !important;
-    }
-    body#gWP1 #dateTimeContainer {
-      align-items: center !important;
-      border-radius: 8px !important;
-      box-sizing: border-box !important;
-      display: inline-flex !important;
-      font: 20px monospace !important;
-      height: 32px !important;
-      min-width: 32px !important;
-      padding: 4px 16px !important;
-      pointer-events: auto !important;
-      user-select: none !important;
-      z-index: 4 !important;
-    }
-    #dateTimeContainer.dragged {
-      transform: none !important;
-    }
-    #dateTimeContainer > * {
-      pointer-events: auto !important;
-    }
-    body#gWP1 #imageCalendar {
-      cursor: pointer !important;
-      margin: 0px !important;
-    }
-    body#gWP1 #imageCalendar:hover + #dateTime {
-      background: #900 !important;
-      border-color: #C00 !important;
-      color: #FFF !important;
-    }
-    body#gWP1 #dateTime {
-      background: rgba(0,0,0,.3) !important;
-      border: 1px solid transparent !important;
-      border-radius: 8px !important;
-      box-shadow: none !important;
-      color: #FFF !important;
-      cursor: pointer !important;
-      display: block !important;
-      height: 28px !important;
-      margin: 0px 0px 0px 3px !important;
-      min-width: 0px !important;
-      padding: 1px 6px !important;
-      user-select: none !important;;
-    }
-    body#gWP1 #dateTime[hidden] {
-      background: none !important;
-      border: none !important;
-      display: none !important;
-      padding: 0px !important;
-      width: 0px !important;
-    }
-    body#gWP1 #dateTime:hover {
-      border: 1px solid #000 !important;
-    }
-    body#gWP1 #changerContainer {
-      align-items: center !important;
-      background: rgba(0,0,0,0.35) !important;
-      border: 2px solid #FFF !important;
-      border-radius: 8px !important;
-      height: 35px !important;
-      min-width: 380px !important;
-      padding: 0px 16px !important;
-      box-sizing: border-box !important;
-      pointer-events: auto !important;
-      user-select: none !important;
-      z-index: 2 !important;
-    }
-    body#gWP1 #changerContainer.dragged {
-      transform: none !important;
-    }
-    body#gWP1 #changerContainer > * {
-      pointer-events: auto !important;
-    }
-    body#gWP1 #buttonThemer {
-      color: #FFF !important;
-      cursor: pointer !important;
-      opacity: .7 !important;
-      text-shadow: 1px 1px 2px #000 !important;
-    }
-    body#gWP1 #inputThemer {
-      background: transparent !important;
-      border: 1px solid transparent !important;
-      border-radius: 6px !important;
-      box-shadow: 0 1px 3px rgba(2555, 255, 255, 0.15) !important;
-      color: #FFF !important;
-      cursor: pointer !important;
-      height: 22px !important;
-      margin: 0px 4px !important;
-      opacity: .7 !important;
-      padding: 4px 0px !important;
-      position: relative !important;
-      text-align: center !important;
-      top: 0px !important;
-      width: 30px !important;
-    }
-    body#gWP1 #downThemer {
-      color: #FFF !important;
-      cursor: pointer !important;
-      opacity: .7 !important;
-      text-shadow: 1px 1px 2px #000 !important;
-    }
-    body#gWP1 .spacerX {
-      color: #FFF !important;
-      filter: brightness(2) !important;
-      margin: 9px 16px 0px 16px !important;
-      opacity: 1 !important;
-      pointer-events: none !important;
-      text-align: center !important;
-    }
-    body#gWP1 #buttonLogo {
-      color: #FFF !important;
-      cursor: pointer !important;
-      opacity: .7 !important;
-      text-shadow: 1px 1px 2px #000 !important;
-    }
-    body#gWP1 #inputLogo {
-      background: transparent !important;
-      border: 1px solid transparent !important;
-      border-radius: 6px !important;
-      box-shadow: 0 1px 3px rgba(255,255,255,0.15) !important;
-      color: #FFF !important;
-      cursor: pointer !important;
-      height: 22px !important;
-      margin: 0px 4px !important;
-      opacity: .7 !important;
-      padding: 4px 0px !important;
-      position: relative !important;
-      text-align: center !important;
-      top: 0px !important;
-      width: 30px !important;
-    }
-    body#gWP1 #downLogo {
-      color: #FFF !important;
-      cursor: pointer !important;
-      opacity: .7 !important;
-      text-shadow: 1px 1px 2px #000 !important;
-    }
-    body#gWP1 #changerContainer > button,
-    body#gWP1 #changerContainer > input {
-      font-family: monospace !important;
-      font-size: 120% !important;
-    }
-    body#gWP1 #analogClockBtn {
-      color: #fff;
-      opacity: .7 !important;
-    }
-    body#gWP1 #analogClockBtn > img {
-      height: 22px;
-      position: relative;
-      top: 6px;
-      width: 22px;
-    }
-    body#gWP1 #analogClockBtn:not(img):hover {
-      color: orange;
-      opacity: 1 !important;
-    }
-    body#gWP1 #changerContainer > button:not(#analogClockBtn):hover {
-      filter: brightness(2) !important;
-      opacity: 1 !important;
-    }
-    body#gWP1 #inputThemer:hover,
-    body#gWP1 #inputThemer:focus-within,
-    body#gWP1 #inputLogo:hover,
-    body#gWP1 #inputLogo:focus-within {
-      border-color: #999 !important;
-      filter: brightness(2) !important;
-      opacity: 1 !important;
-    }
-    body#gWP1 ::-webkit-inner-spin-button,
-    body#gWP1 ::-webkit-outer-spin-button,
-    body#gWP1 ::-webkit-inner-spin-button,
-    body#gWP1 ::-webkit-outer-spin-button {
-      display: none !important;
-    }
-    body#gWP1 .ClockContainer {
+    .ClockContainer {
       align-items: center;
       display: flex;
       flex-direction: column;
@@ -618,7 +386,7 @@
       user-select: none;
       z-index: 3;
     }
-    body#gWP1 .Analog-Bigclock {
+    .Analog-Bigclock {
       align-self: center;
       cursor: move;
       flex-shrink: 0;
@@ -626,7 +394,7 @@
       margin: 0 auto;
       width: var(--clock-size);
     }
-    body#gWP1 .Analog {
+    .Analog {
       background: radial-gradient(circle at 50% 50%, #f8f9fa 0%, #e9ecef 100%);
       border: 1px solid #fff !important;
       border-radius: 50% !important;
@@ -634,37 +402,37 @@
       height: 100%;
       width: 100%;
     }
-    body#gWP1 .Analog-Second-Hand,
-    body#gWP1 .Analog-Minute-Hand,
-    body#gWP1 .Analog-Hour-Hand {
+    .Analog-Second-Hand,
+    .Analog-Minute-Hand,
+    .Analog-Hour-Hand {
       stroke-linecap: round;
       transform-origin: 50% 50%;
     }
-    body#gWP1 .Analog-Second-Hand {
+    .Analog-Second-Hand {
       transform: rotate(var(--secondDeg, 0deg));
     }
-    body#gWP1 .Analog-Minute-Hand {
+    .Analog-Minute-Hand {
       transform: rotate(var(--minuteDeg, 0deg));
     }
-    body#gWP1 .Analog-Hour-Hand {
+    .Analog-Hour-Hand {
       transform: rotate(var(--hourDeg, 0deg));
     }
-    body#gWP1 .Analog-Second-Hand {
+    .Analog-Second-Hand {
       fill: #e74c3c;
       stroke: #e74c3c;
       stroke-width: 1;
     }
-    body#gWP1 .Analog-Minute-Hand {
+    .Analog-Minute-Hand {
       fill: #34495e;
       stroke: #34495e;
       stroke-width: 2;
     }
-    body#gWP1 .Analog-Hour-Hand {
+    .Analog-Hour-Hand {
       fill: #2c3e50;
       stroke: #2c3e50;
       stroke-width: 3;
     }
-    body#gWP1 .Analog-Number {
+    .Analog-Number {
       fill: #2c3e50;
       font-family: system-ui, Arial, sans-serif;
       font-size: 6.8px;
@@ -672,63 +440,63 @@
       paint-order: stroke fill;
       stroke: none;
     }
-    body#gWP1 .Analog-CenterCutout {
+    .Analog-CenterCutout {
       fill: #2c3e50;
       stroke: white;
       stroke-width: 3;
     }
-    body#gWP1 .Analog-Bigclock.dark .Analog {
+    .Analog-Bigclock.dark .Analog {
       background: radial-gradient(circle at 50% 50%, #2c3e50 0%, #1a252f 100%);
       border-color: #ecf0f1;
     }
-    body#gWP1 .Analog-Bigclock.dark .Analog-Second-Hand {
+    .Analog-Bigclock.dark .Analog-Second-Hand {
       fill: #ff6b6b;
       stroke: #ff6b6b;
     }
-    body#gWP1 .Analog-Bigclock.dark .Analog-Minute-Hand,
-    body#gWP1 .Analog-Bigclock.dark .Analog-Hour-Hand {
+    .Analog-Bigclock.dark .Analog-Minute-Hand,
+    .Analog-Bigclock.dark .Analog-Hour-Hand {
       fill: #ecf0f1;
       stroke: #ecf0f1;
     }
-    body#gWP1 .Analog-Bigclock.dark .Analog-Number {
+    .Analog-Bigclock.dark .Analog-Number {
       fill: #fff;
     }
-    body#gWP1 .Analog-Bigclock.dark .Analog-CenterCutout {
+    .Analog-Bigclock.dark .Analog-CenterCutout {
       fill: #ecf0f1;
       stroke: #2c3e50;
     }
-    body#gWP1 .Analog-AMPMText {
+    .Analog-AMPMText {
       fill: #0078d7;
       font-size: 7px;
     }
-    body#gWP1 .Analog-Bigclock.dark .Analog-AMPMText {
+    .Analog-Bigclock.dark .Analog-AMPMText {
       fill: #fff;
     }
-    body#gWP1 .Analog-AMPMBorder {
+    .Analog-AMPMBorder {
       fill: none;
       stroke: #0078d7;
       stroke-width: 0.25;
     }
-    body#gWP1 .Analog-Bigclock.dark .Analog-AMPMBorder {
+    .Analog-Bigclock.dark .Analog-AMPMBorder {
       fill: none;
       stroke: #0078d7;
       stroke-width: 0.25;
     }
-    body#gWP1 .ControlsRow {
+    .ControlsRow {
       display: flex;
       align-items: center;
       gap: 12px;
       justify-content: center;
       width: 334px;
     }
-    body#gWP1 .Analog-CalendarText {
+    .Analog-CalendarText {
       display: inline-block;
       color: #fff;
       font-size: 16px;
       font-weight: 600;
       white-space: nowrap;
     }
-    body#gWP1 .scaler-controls {
+    .scaler-controls {
       align-items: center;
       background: #34495e;
       border-radius: 8px;
@@ -740,8 +508,8 @@
       padding-bottom: 3px;
       width: 334px;
     }
-    body#gWP1 .ClockThemeToggle,
-    body#gWP1 .scaler-info {
+    .ClockThemeToggle,
+    .scaler-info {
       border: none;
       border-radius: 18px;
       color: #7a8287;
@@ -753,7 +521,7 @@
       text-align: center;
       width: 68px;
     }
-    body#gWP1 .scaler-reset {
+    .scaler-reset {
       background: none;
       border: none;
       color: #7a8287;
@@ -763,7 +531,7 @@
       margin: 4px 4px 0px 4px;
       padding: 0;
     }
-    body#gWP1 .scaler-btn {
+    .scaler-btn {
       background: none;
       border: none;
       color: #ffffff;
@@ -772,10 +540,10 @@
       line-height: 1;
       padding: 0px 4px;
     }
-    body#gWP1 .scaler-btn:hover {
+    .scaler-btn:hover {
       opacity: 0.8;
     }
-    body#gWP1 .scaler-text {
+    .scaler-text {
       background: rgba(255,255,255,.1);
       border: 1px solid #666;
       border-radius: 14px;
@@ -787,7 +555,7 @@
       min-width: 32px;
       padding: 1px 2px 0px 0px;
     }
-    body#gWP1 .Analog-Info {
+    .Analog-Info {
       align-items: center;
       background: #34495e;
       border-radius: 0px 0px 8px 8px;
@@ -800,20 +568,21 @@
 	     text-align: center;
       width: 334px;
     }
-    body#gWP1 .ClockThemeToggle:hover,
-    body#gWP1 .scaler-reset:hover,
-    body#gWP1 .scaler-info:hover {
+    .ClockThemeToggle:hover,
+    .scaler-reset:hover,
+    .scaler-info:hover {
       color: #ffffff;
     }
-    body#gWP1 .scaler-text:hover,
-    body#gWP1 .scaler-text:focus-within {
+    .scaler-text:hover,
+    .scaler-text:focus-within {
       border-color: #ffffff;
       color: #ffffff;
     }
-    body#gWP1 .scaler-text::-webkit-inner-spin-button,
-    body#gWP1 .scaler-text::-webkit-outer-spin-button,
-    body#gWP1 .hidden {
+    .scaler-text::-webkit-inner-spin-button,
+    .scaler-text::-webkit-outer-spin-button,
+    .hidden {
       display: none;
     }
   `);
 })();
+
