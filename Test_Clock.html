@@ -103,99 +103,109 @@
     fill: #fff;
   }
   .ControlsRow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-  }
-  .Analog-Info {
-    background: #34495e;
-    border-radius: 30px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    margin: auto;
-    padding: 4px 12px;
-    text-align: center;
-    width: auto;
-  }
-  .Analog-CalendarText {
-    display: inline-block;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  .ClockThemeToggle {
-    background: #34495e;
-    border: none;
-    border-radius: 30px;
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
-    padding: 8px 10px 9px 10px;
-    margin: 9px 0 0 0;
-    text-align: center;
-    width: 80px;
-  }
-  .scaler-controls {
-    align-items: center;
-    background: #34495e;
-    border-radius: 30px;
-    display: flex;
-    float: right;
-    gap: 12px;
-    justify-content: center;
-    margin: 8px 0px 0px 0px;
-    padding: 6px 12px 5px 12px;
-    width: fit-content;
-  }
-  .scaler-reset {
-    background: none;
-    border: none;
-    color: #7a8287;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    margin: 4px;
-    padding: 0;
-  }
-  .scaler-reset:hover {
-    color: #ffffff;
-  }
-  .scaler-btn {
-    background: none;
-    border: none;
-    color: #ffffff;
-    cursor: pointer;
-    font-size: 18px;
-    line-height: 1;
-    padding: 0px 4px;
-  }
-  .scaler-btn:hover {
-    opacity: 0.8;
-  }
-  .scaler-text {
-    background: rgba(255,255,255,.1);
-    border: 1px solid #666;
-    border-radius: 14px;
-    color: #5294e2;
-    font-size: 14px;
-    font-weight: 500;
-    text-align: center;
-    min-width: 32px;
-    padding: 1px 2px 0px 0px;
-  }
-  .scaler-text:hover,
-  .scaler-text:focus-within {
-    border-color: #ffffff;
-    color: #ffffff;
-  }
-  .scaler-text::-webkit-inner-spin-button,
-  .scaler-text::-webkit-outer-spin-button {
-    display: none;
-  }
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+      width: 334px;
+    }
+    .Analog-CalendarText {
+      display: inline-block;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .scaler-controls {
+      align-items: center;
+      background: #34495e;
+      border-radius: 8px;
+      display: flex;
+      gap: 12px;
+      height: 35px;
+      justify-content: center;
+      margin-top: 4px;
+      padding-bottom: 3px;
+      width: 334px;
+    }
+    .ClockThemeToggle,
+    .scaler-info {
+	  background: transparent;
+      border: none;
+      border-radius: 18px;
+      color: #999;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      height: 29px;
+      padding: 6px 0px;
+      text-align: center;
+	  text-shadow: 1px 1px #000;
+      width: 68px;
+    }
+    .scaler-reset {
+      background: none;
+      border: none;
+      color: #999;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      margin: 4px 4px 0px 4px;
+      padding: 0;
+	  text-shadow: 1px 1px #000;
+    }
+    .scaler-btn {
+      background: none;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      padding: 0px 4px;
+    }
+    .scaler-btn:hover {
+      opacity: 0.8;
+    }
+    .scaler-text {
+      background: rgba(255,255,255,.1);
+      border: 1px solid #666;
+      border-radius: 14px;
+      color: #5294e2;
+      font-size: 14px;
+      font-weight: 500;
+      text-align: center;
+      margin-top: 0px;
+      min-width: 32px;
+      padding: 1px 2px 0px 0px;
+    }
+    .Analog-Info {
+      align-items: center;
+      background: #34495e;
+      border-radius: 0px 0px 8px 8px;
+      display: inline-flex;
+      gap: 12px;
+      height: 35px;
+      justify-content: center;
+      margin-top: -6px;
+      padding-top: 0px;
+	     text-align: center;
+      width: 334px;
+    }
+    .ClockThemeToggle:hover,
+    .scaler-reset:hover,
+    .scaler-info:hover {
+      color: #ffffff;
+    }
+    .scaler-text:hover,
+    .scaler-text:focus-within {
+      border-color: #ffffff;
+      color: #ffffff;
+    }
+    .scaler-text::-webkit-inner-spin-button,
+    .scaler-text::-webkit-outer-spin-button,
+    .hidden {
+      display: none;
+    }
 </style>
 </head>
 <body>
@@ -323,11 +333,9 @@
   const DAY_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const MONTH_ABBR = ['Jan.','Feb.','Mar.','Apr.','May','Jun.','Jul.','Aug.','Sep.','Oct.','Nov.','Dec.'];
   const MONTH_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-
   if (localStorage.getItem('defaultAMPM') === null) {
     localStorage.setItem('defaultAMPM', 'true');
   }
-  
   // ============ Analog Clock ============
   const getClock = () => {
     if (document.getElementById('analogClockContainer')) return;
@@ -371,8 +379,8 @@
     const ampmBorder = $el('rect', {
       className: 'Analog-AMPMBorder',
       x: 44,
-      y: 75,
-      width: 13,
+      y: 74,
+      width: 12,
       height: 7,
       rx: 2,
       ry: 2
@@ -380,7 +388,7 @@
     const ampmText = $el('text', {
       className: 'Analog-AMPMText',
       x: 45,
-      y: 81,
+      y: 80,
       textAnchor: 'middle',
       dominantBaseline: 'middle'
     });
@@ -412,7 +420,7 @@
       min: '30',
       max: '200',
       step: '1',
-      title: 'Min. 40% = 120px Ø\nReset 100% = 300px Ø\nnMax. 200% = 600px Ø',
+      title: 'Manually Enter Percentage:\n • Min. 30% = 90px Ø\n • Reset 100% = 300px Ø\n • Max. 200% = 600px Ø',
       oninput(e) {
         const val = e.target.value;
         if (val === '') return;
@@ -424,7 +432,6 @@
     const setClockPercentage = (percent) => {
       currentPercent = Math.max(30, Math.min(200, percent));
       const pixelSize = Math.round((currentPercent / 100) * BASE_SIZE);
-      console.log('Setting clock size:', currentPercent, pixelSize + 'px');
       Clock.style.setProperty('--clock-size', pixelSize + 'px');
       percentageDisplay.value = String(currentPercent);
       localStorage.setItem('clockSizePercent', currentPercent);
@@ -433,53 +440,70 @@
 	  className: 'Analog-Info' },
       calendarText
     );
+    const themeBtn = $el('button', {
+      className: 'ClockThemeToggle',
+      title: 'Light/Dark Analog Clock Theme'
+    });
+    const setTheme = (dark) => {
+      Clock.classList.toggle('dark', dark);
+      themeBtn.textContent = dark ? '☀️ Light' : '🌙 Dark';
+      localStorage.setItem('clockDarkTheme', dark);
+    };
+    setTheme(localStorage.getItem('clockDarkTheme', true));
+    themeBtn.onclick = () => {
+      setTheme(!Clock.classList.contains('dark'));
+    };
     const scalerControls = $el('div', { className: 'scaler-controls' },
+      themeBtn,
       $el('button', {
         className: 'scaler-reset',
         textContent: 'Reset',
+        title: 'Reset To 100%',
         onclick: () => setClockPercentage(100)
       }),
       $el('button', {
         className: 'scaler-btn',
-        textContent: '-',
+        textContent: '–',
+        title: 'Scale Down In 5% Increments',
         onclick: () => setClockPercentage(currentPercent - 5)
       }),
       percentageDisplay,
       $el('button', {
         className: 'scaler-btn',
         textContent: '+',
+        title: 'Scale Up In 5% Increments',
         onclick: () => setClockPercentage(currentPercent + 5)
-      })
-    );
-    const themeBtn = $el('button', {
-      className: 'ClockThemeToggle',
-      textContent: '🌙 Dark',
+      }),
+      $el('button', {
+      className: 'scaler-info',
+      textContent: '📅 Date',
+      title: 'Show/Hide Date Info',
       onclick() {
-        const dark = Clock.classList.toggle('dark');
-        themeBtn.textContent = dark ? '☀️ Light' : '🌙 Dark';
-      }
-    });
-    const savedPercent = localStorage.getItem('clockSizePercent');
-    if (savedPercent) {
-      setClockPercentage(parseInt(savedPercent, 10));
-    } else {
-      setClockPercentage(100);
-    }
-	const controlsRow = $el(
+        clockInfo.classList.toggle('hidden');
+        localStorage.setItem('calendarInfo', !clockInfo.classList.contains('hidden'));
+      }})
+    );
+    const savedPercent = localStorage.getItem('clockSizePercent', 100);
+    setClockPercentage(savedPercent);
+	   const controlsRow = $el(
       'div',
       { className: 'ControlsRow' },
-      themeBtn,
       scalerControls
     );
     const container = $el(
       'div',
       { id: 'analogClockContainer', className: 'ClockContainer' },
       Clock,
-      clockInfo,
-      controlsRow
+      controlsRow,
+      clockInfo
     );
     makeDraggable(container, 'analogClockContainer', '.Analog-Bigclock');
     restorePosition(container, 'analogClockContainer');
+    const rect = container.getBoundingClientRect();
+    if (rect.right < 0 || rect.bottom < 0 || rect.left > window.innerWidth || rect.top > window.innerHeight) {
+      container.style.left = '20px';
+      container.style.top = '20px';
+    }
     document.body.appendChild(container);
     let displayedSecondDeg = 0;
     const updateClock = () => {
@@ -488,6 +512,8 @@
       const dayAbbr = DAY_ABBR[dy], dayFull = DAY_FULL[dy], monthAbbr = MONTH_ABBR[mth], monthFull = MONTH_FULL[mth];
       const suffix = ['th', 'st', 'nd', 'rd'][(dt % 10 > 3 || Math.floor(dt / 10) === 1 ? 0 : dt % 10)] || 'th';
       const ordinal = dt + suffix;
+      const h12 = String(now.getHours() % 12 || 12);
+      const min = String(now.getMinutes()).padStart(2, '0');
       const seconds = now.getSeconds() + now.getMilliseconds() / 1000;
       const secondDeg = seconds * 6;
       let targetDeg = secondDeg;
@@ -498,10 +524,13 @@
       Clock.style.setProperty('--secondDeg', `${displayedSecondDeg}deg`);
       Clock.style.setProperty('--minuteDeg', `${minuteDeg}deg`);
       Clock.style.setProperty('--hourDeg', `${hourDeg}deg`);
-      const showAMPM = localStorage.getItem('defaultAMPM');
-      ampmText.textContent = showAMPM !== 'false' ? (now.getHours() < 12 ? 'AM' : 'PM') : '';
-      calendarText.textContent = `${dayFull} ⇒ ${monthFull} ${ordinal}, ${yr}`;
+      ampmText.textContent = now.getHours() < 12 ? 'AM' : 'PM';
+      calendarText.textContent = `${dayFull} ⇒ ${monthFull} ${ordinal}, ${yr}\u3000${h12}:${min}`;
     };
+    const showCalendarInfo = localStorage.getItem('calendarInfo', false);
+    if (!showCalendarInfo) {
+      clockInfo.classList.add('hidden');
+    }
     const tick = () => {
       updateClock();
       requestAnimationFrame(tick);
@@ -511,15 +540,24 @@
   };
   const init = () => {
     document.removeEventListener('DOMContentLoaded', init);
-    getClock();
-  }
+	getClock();
+  };
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && localStorage.getItem('analogClock', true)) {
+      if (!document.getElementById('analogClockContainer')) {
+        getClock();
+    } }
+  });
+  window.addEventListener('pageshow', () => {
+    if (localStorage.getItem('analogClock', true) && !document.getElementById('analogClockContainer')) {
+      getClock();
+    }
+  });
   if (document.readyState === "loading") {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
-  tick();
-  updateClock();
 </script>
 </body>
 </html>
