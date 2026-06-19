@@ -19,6 +19,20 @@
   'use strict';
 
   // ============ Helpers ============
+  const _aURL = 'https://raw.githubusercontent.com/Razzano/My_Images/master/';
+  const _Icon = {
+    calendar16: _aURL + 'calendar16.png',
+    calendar22: _aURL + 'calendar22.png',
+    calendar32D: _aURL + 'calendar32D.png',
+    clock16: _aURL + 'clock16.png',
+    clock22: _aURL + 'clock22.png',
+    clock22L: _aURL + 'clock22L.png',
+    clock26: _aURL + 'clock26.png',
+    moon16: _aURL + 'moon16.png',
+    moon22: _aURL + 'moon22.png',
+    sun16: _aURL + 'sun16.png',
+    sun22: _aURL + 'sun22.png',
+  };
   const SVG_NS = "http://www.w3.org/2000/svg";
   const SVG_TAGS = new Set([
     "svg","g","path","circle","text","line","rect","polyline","polygon",
@@ -140,8 +154,10 @@
   // ============ Analog Clock ============
   const getClock = () => {
     if (!GM_getValue('analogClock', true)) return;
+    const smoothSecondHand = GM_getValue('smoothSecondHand', true);
     const ticks = [];
     const hourNumbers = [];
+    const spacer3 = $el('span', {id: 'spacer3', class: 'spacerX', textContent: '|'});
     for (let i = 0; i < 60; i++) {
       const angleDeg = i * 6 - 90;
       const rad = angleDeg * Math.PI / 180;
@@ -167,8 +183,8 @@
       const radius = 37;
       hourNumbers.push($el('text', {
         className: 'Analog-Number',
-        x: (50 + radius * Math.cos(rad)).toFixed(3),
-        y: (48 + radius * Math.sin(rad) + 2.8).toFixed(3),
+        x: 50 + radius * Math.cos(rad),
+        y: 50.8 + radius * Math.sin(rad),
         textContent: hour,
         'text-anchor': 'middle',
         'dominant-baseline': 'middle'
@@ -180,7 +196,7 @@
     const ampmBorder = $el('rect', {
       className: 'Analog-AMPMBorder',
       x: 44,
-      y: 74,
+      y: 75,
       width: 12,
       height: 7,
       rx: 2,
@@ -189,7 +205,7 @@
     const ampmText = $el('text', {
       className: 'Analog-AMPMText',
       x: 45,
-      y: 80,
+      y: 81,
       textAnchor: 'middle',
       dominantBaseline: 'middle'
     });
@@ -237,25 +253,60 @@
       percentageDisplay.value = String(currentPercent);
       GM_setValue('clockSizePercent', currentPercent);
     };
-	   const clockInfo = $el( 'div', {
-	     className: 'Analog-Info' },
-      calendarText
-    );
+    const moonImg = $el('img', {
+      id: 'moonImg',
+      src: _Icon.moon22
+    });
     const themeBtn = $el('button', {
       className: 'ClockThemeToggle',
-      title: 'Light/Dark Analog Clock Theme'
-    });
+      title: 'Toggle Between Dark/Light Theme'
+    }, moonImg);
     const setTheme = (dark) => {
       Clock.classList.toggle('dark', dark);
-      themeBtn.textContent = dark ? '☀️ Light' : '🌙 Dark';
+      moonImg.src = dark ? _Icon.sun22 : _Icon.moon22;
       GM_setValue('clockDarkTheme', dark);
     };
     setTheme(GM_getValue('clockDarkTheme', true));
     themeBtn.onclick = () => {
       setTheme(!Clock.classList.contains('dark'));
     };
+    const clockImg = $el('img', {
+      id: 'clockImg',
+      src: _Icon.clock22L
+    });
+    const secondHandBtn = $el('button', {
+      className: 'ClockSecondToggle',
+      title: 'Toggle Between Smooth/Tick Second Hand Movement'
+    }, clockImg);
+    const setSecondMode = (smooth) => {
+      GM_setValue('smoothSecondHand', smooth);
+    };
+    setSecondMode(GM_getValue('smoothSecondHand', true));
+    secondHandBtn.onclick = () => {
+      setSecondMode(!GM_getValue('smoothSecondHand', true));
+      location.reload();
+    };
+    const calendarImg = $el('img', {
+      id: 'calendarImg',
+      src: _Icon.calendar22
+    });
+    const clockInfo = $el( 'div', {
+	     className: 'Analog-Info' },
+      calendarText
+    );
+    const calendarBtn = $el('button', {
+      className: 'scaler-info',
+      title: 'Show/Hide Calendar Info',
+      onclick() {
+        clockInfo.classList.toggle('hidden');
+        GM_setValue('calendarInfo', !clockInfo.classList.contains('hidden'));
+      }
+    }, calendarImg);
     const scalerControls = $el('div', { className: 'scaler-controls' },
       themeBtn,
+      secondHandBtn,
+      calendarBtn,
+      spacer3,
       $el('button', {
         className: 'scaler-reset',
         textContent: 'Reset',
@@ -274,15 +325,7 @@
         textContent: '+',
         title: 'Scale Up In 5% Increments',
         onclick: () => setClockPercentage(currentPercent + 5)
-      }),
-      $el('button', {
-      className: 'scaler-info',
-      textContent: '📅 Date',
-      title: 'Show/Hide Date Info',
-      onclick() {
-        clockInfo.classList.toggle('hidden');
-        GM_setValue('calendarInfo', !clockInfo.classList.contains('hidden'));
-      }})
+      })
     );
     const savedPercent = GM_getValue('clockSizePercent', 100);
     setClockPercentage(savedPercent);
@@ -315,43 +358,44 @@
       const ordinal = dt + suffix;
       const h12 = String(now.getHours() % 12 || 12);
       const min = String(now.getMinutes()).padStart(2, '0');
-      const seconds = now.getSeconds() + now.getMilliseconds() / 1000;
+      const seconds = smoothSecondHand ? now.getSeconds() + now.getMilliseconds() / 1000 : now.getSeconds();
       const secondDeg = seconds * 6;
+      const minuteDeg = now.getMinutes() * 6 + seconds * 0.1;
+      const hourDeg = (now.getHours() % 12) * 30 + now.getMinutes() * 0.5 + seconds * (0.5 / 60);
       let targetDeg = secondDeg;
       if (targetDeg < displayedSecondDeg - 180) targetDeg += 360;
       displayedSecondDeg = targetDeg;
-      const minuteDeg = now.getMinutes() * 6 + seconds * 0.1;
-      const hourDeg = (now.getHours() % 12) * 30 + now.getMinutes() * 0.5 + seconds * (0.5 / 60);
       Clock.style.setProperty('--secondDeg', `${displayedSecondDeg}deg`);
       Clock.style.setProperty('--minuteDeg', `${minuteDeg}deg`);
       Clock.style.setProperty('--hourDeg', `${hourDeg}deg`);
       ampmText.textContent = now.getHours() < 12 ? 'AM' : 'PM';
       calendarText.textContent = `${dayFull} ⇒ ${monthFull} ${ordinal}, ${yr}\u3000${h12}:${min}`;
     };
+    if (smoothSecondHand) {
+      const tick = () => {
+        updateClock();
+        requestAnimationFrame(tick);
+      };
+      tick();
+    } else {
+      updateClock();
+      setInterval(updateClock, 1000);
+    }
     const showCalendarInfo = GM_getValue('calendarInfo', false);
     if (!showCalendarInfo) {
       clockInfo.classList.add('hidden');
     }
-    const tick = () => {
-      updateClock();
-      requestAnimationFrame(tick);
-    };
-    tick();
-    updateClock();
   };
 
+
   // ============ Initialize ============
+
   const init = () => {
     document.removeEventListener('DOMContentLoaded', init);
     const body = document.body;
     if (!body) return;
-    const showClock = GM_getValue('analogClock', true);
     const clock = $id('analogClockContainer');
-    if (showClock) {
-      requestAnimationFrame(() => getClock());
-    } else {
-      clock?.remove();
-    }
+    getClock();
   };
 
   document.addEventListener('visibilitychange', () => {
@@ -468,6 +512,7 @@
     .Analog-AMPMText {
       fill: #0078d7;
       font-size: 7px;
+      font-weight: 300;
     }
     .Analog-Bigclock.dark .Analog-AMPMText {
       fill: #fff;
@@ -483,53 +528,45 @@
       stroke-width: 0.25;
     }
     .ControlsRow {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      justify-content: center;
-      width: 334px;
-    }
-    .Analog-CalendarText {
-      display: inline-block;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 600;
-      white-space: nowrap;
     }
     .scaler-controls {
       align-items: center;
       background: #34495e;
+      border: none;
       border-radius: 8px;
       display: flex;
-      gap: 12px;
-      height: 35px;
+      gap: 16px;
+      height: 32px;
       justify-content: center;
       margin-top: 4px;
-      padding-bottom: 3px;
-      width: 334px;
+      padding: 0px;
+      width: 364px;
     }
     .ClockThemeToggle,
+    .ClockSecondToggle,
     .scaler-info {
+	  background: none;
       border: none;
-      border-radius: 18px;
-      color: #7a8287;
       cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      height: 29px;
-      padding: 6px 0px;
-      text-align: center;
-      width: 68px;
+      margin: 0px;
+      padding: 0px;
+      position: relative;
+      top: 3px;
+      width: 32px;
+    }
+    .ClockThemeToggle {
+    }
+    .scaler-info {
     }
     .scaler-reset {
       background: none;
       border: none;
-      color: #7a8287;
       cursor: pointer;
       font-size: 14px;
-      font-weight: 500;
-      margin: 4px 4px 0px 4px;
+      margin: 0px;
       padding: 0;
+      position: relative;
+      top: 1px;
     }
     .scaler-btn {
       background: none;
@@ -538,10 +575,11 @@
       cursor: pointer;
       font-size: 18px;
       line-height: 1;
+      opacity: .7;
       padding: 0px 4px;
     }
     .scaler-btn:hover {
-      opacity: 0.8;
+      opacity: 1;
     }
     .scaler-text {
       background: rgba(255,255,255,.1);
@@ -555,18 +593,43 @@
       min-width: 32px;
       padding: 1px 2px 0px 0px;
     }
+    .ClockThemeToggle,
+    .ClockSecondToggle,
+    .scaler-info,
+    .scaler-reset {
+      color: #ffffff;
+      opacity: .7;
+    }
+    .ClockThemeToggle:hover,
+    .ClockSecondToggle:hover,
+    .scaler-info:hover,
+    .scaler-reset:hover {
+      opacity: 1;
+    }
+    #spacer3 {
+      color: #666;
+	  margin: 0px 6px 0px 0px;
+      opacity: 1;
+      pointer-events: none;
+      text-align: center;
+    }
     .Analog-Info {
       align-items: center;
       background: #34495e;
       border-radius: 0px 0px 8px 8px;
       display: inline-flex;
-      gap: 12px;
-      height: 35px;
       justify-content: center;
       margin-top: -6px;
-      padding-top: 0px;
-	     text-align: center;
-      width: 334px;
+      padding: 8px 0px 2px 0px;
+	  text-align: center;
+      width: 364px;
+    }
+    .Analog-CalendarText {
+      display: inline-block;
+      color: #fff;
+      font-family: monospace;
+      font-size: 16px;
+      white-space: nowrap;
     }
     .ClockThemeToggle:hover,
     .scaler-reset:hover,
