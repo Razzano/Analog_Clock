@@ -5,154 +5,153 @@
 <title>Analog Clock</title>
 <style>
   .ClockContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: system-ui, Arial, sans-serif;
-    left: 50px;
-    position: absolute;
-    top: 100px;
-    user-select: none;
-    z-index: 9999;
-  }
-  .Analog-Bigclock {
-    cursor: move;
-    width: var(--clock-size);
-    height: var(--clock-size);
-    flex-shrink: 0;
-    margin: 0 auto;
-    align-self: center;
-  }
-  .Analog {
-    background: radial-gradient(circle at 50% 50%, #f8f9fa 0%, #e9ecef 100%);
-    border-radius: 50%;
-    box-shadow: inset 0 0 25px rgba(0,0,0,0.08), 0 15px 35px rgba(0,0,0,0.25);
-    height: 100%;
-    width: 100%;
-  }
-  .Analog-Hour-Hand,
-  .Analog-Minute-Hand,
-  .Analog-Second-Hand {
-    transform-origin: 50% 50%;
-  }
-  .Analog-Hour-Hand {
-    transform: rotate(var(--hourDeg, 0deg));
-  }
-  .Analog-Minute-Hand {
-    transform: rotate(var(--minuteDeg, 0deg));
-  }
-  .Analog-Second-Hand {
-    transform: rotate(var(--secondDeg, 0deg));
-  }
-  .Analog-Hour-Hand {
-    fill: #2c3e50;
-    stroke: #2c3e50;
-    stroke-linecap: round;
-    stroke-width: 3;
-  }
-  .Analog-Minute-Hand {
-    fill: #34495e;
-    stroke: #34495e;
-    stroke-linecap: round;
-    stroke-width: 2;
-  }
-  .Analog-Second-Hand {
-    fill: #e74c3c;
-    stroke: #e74c3c;
-    stroke-linecap: round;
-    stroke-width: 1;
-  }
-  .Analog-Number {
-    fill: #2c3e50;
-    font-family: system-ui, Arial, sans-serif;
-    font-size: 6.8px;
-    font-weight: 700;
-    paint-order: stroke fill;
-    stroke: none;
-  }
-  .Analog-CenterCutout {
-    fill: #2c3e50;
-    stroke: white;
-    stroke-width: 3;
-  }
-  .Analog-Bigclock.dark .Analog {
-    background: radial-gradient(circle at 50% 50%, #2c3e50 0%, #1a252f 100%);
-    border-color: #ecf0f1;
-  }
-  .Analog-Bigclock.dark .Analog-Hour-Hand,
-  .Analog-Bigclock.dark .Analog-Minute-Hand {
-    fill: #ecf0f1;
-    stroke: #ecf0f1;
-  }
-  .Analog-Bigclock.dark .Analog-Second-Hand {
-    fill: #ff6b6b;
-    stroke: #ff6b6b;
-  }
-  .Analog-Bigclock.dark .Analog-Number {
-    fill: #fff;
-  }
-  .Analog-Bigclock.dark .Analog-CenterCutout {
-    fill: #ecf0f1;
-    stroke: #2c3e50;
-  }
-  .Analog-AMPMText {
-    font-size: 6px;
-    fill: #0078d7;
-  }
-  .Analog-Bigclock.dark .Analog-AMPMText {
-    fill: #fff;
-  }
-  .ControlsRow {
-      display: flex;
       align-items: center;
-      gap: 12px;
-      justify-content: center;
-      width: 334px;
+      display: flex;
+      flex-direction: column;
+      font-family: system-ui, Arial, sans-serif;
+      left: 50px;
+      position: absolute;
+      top: 100px;
+      user-select: none;
+      z-index: 3;
     }
-    .Analog-CalendarText {
-      display: inline-block;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 600;
-      white-space: nowrap;
+    .Analog-Bigclock {
+      align-self: center;
+      cursor: move;
+      flex-shrink: 0;
+      height: var(--clock-size);
+      margin: 0 auto;
+      width: var(--clock-size);
+    }
+    .Analog {
+      background: radial-gradient(circle at 50% 50%, #f8f9fa 0%, #e9ecef 100%);
+      border: 1px solid #fff !important;
+      border-radius: 50% !important;
+      box-shadow: inset 0 0 25px rgba(0,0,0,0.08), 0 15px 35px rgba(0,0,0,0.25);
+      height: 100%;
+      width: 100%;
+    }
+    .Analog-Second-Hand,
+    .Analog-Minute-Hand,
+    .Analog-Hour-Hand {
+      stroke-linecap: round;
+      transform-origin: 50% 50%;
+    }
+    .Analog-Second-Hand {
+      transform: rotate(var(--secondDeg, 0deg));
+    }
+    .Analog-Minute-Hand {
+      transform: rotate(var(--minuteDeg, 0deg));
+    }
+    .Analog-Hour-Hand {
+      transform: rotate(var(--hourDeg, 0deg));
+    }
+    .Analog-Second-Hand {
+      fill: #e74c3c;
+      stroke: #e74c3c;
+      stroke-width: 1;
+    }
+    .Analog-Minute-Hand {
+      fill: #34495e;
+      stroke: #34495e;
+      stroke-width: 2;
+    }
+    .Analog-Hour-Hand {
+      fill: #2c3e50;
+      stroke: #2c3e50;
+      stroke-width: 3;
+    }
+    .Analog-Number {
+      fill: #2c3e50;
+      font-family: system-ui, Arial, sans-serif;
+      font-size: 6.8px;
+      font-weight: 700;
+      paint-order: stroke fill;
+      stroke: none;
+    }
+    .Analog-CenterCutout {
+      fill: #2c3e50;
+      stroke: white;
+      stroke-width: 3;
+    }
+    .Analog-Bigclock.dark .Analog {
+      background: radial-gradient(circle at 50% 50%, #2c3e50 0%, #1a252f 100%);
+      border-color: #ecf0f1;
+    }
+    .Analog-Bigclock.dark .Analog-Second-Hand {
+      fill: #ff6b6b;
+      stroke: #ff6b6b;
+    }
+    .Analog-Bigclock.dark .Analog-Minute-Hand,
+    .Analog-Bigclock.dark .Analog-Hour-Hand {
+      fill: #ecf0f1;
+      stroke: #ecf0f1;
+    }
+    .Analog-Bigclock.dark .Analog-Number {
+      fill: #fff;
+    }
+    .Analog-Bigclock.dark .Analog-CenterCutout {
+      fill: #ecf0f1;
+      stroke: #2c3e50;
+    }
+    .Analog-AMPMText {
+      fill: #0078d7;
+      font-size: 7px;
+      font-weight: 300;
+    }
+    .Analog-Bigclock.dark .Analog-AMPMText {
+      fill: #fff;
+    }
+    .Analog-AMPMBorder {
+      fill: none;
+      stroke: #0078d7;
+      stroke-width: 0.25;
+    }
+    .Analog-Bigclock.dark .Analog-AMPMBorder {
+      fill: none;
+      stroke: #0078d7;
+      stroke-width: 0.25;
+    }
+    .ControlsRow {
     }
     .scaler-controls {
       align-items: center;
       background: #34495e;
+      border: none;
       border-radius: 8px;
       display: flex;
-      gap: 12px;
-      height: 35px;
+      gap: 16px;
+      height: 32px;
       justify-content: center;
       margin-top: 4px;
-      padding-bottom: 3px;
-      width: 334px;
+      padding: 0px;
+      width: 364px;
     }
     .ClockThemeToggle,
+    .ClockSecondToggle,
     .scaler-info {
-	  background: transparent;
+	  background: none;
       border: none;
-      border-radius: 18px;
-      color: #999;
       cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      height: 29px;
-      padding: 6px 0px;
-      text-align: center;
-	  text-shadow: 1px 1px #000;
-      width: 68px;
+      margin: 0px;
+      padding: 0px;
+      position: relative;
+      top: 3px;
+      width: 32px;
+    }
+    .ClockThemeToggle {
+    }
+    .scaler-info {
     }
     .scaler-reset {
       background: none;
       border: none;
-      color: #999;
       cursor: pointer;
       font-size: 14px;
-      font-weight: 500;
-      margin: 4px 4px 0px 4px;
+      margin: 0px;
       padding: 0;
-	  text-shadow: 1px 1px #000;
+      position: relative;
+      top: 1px;
     }
     .scaler-btn {
       background: none;
@@ -161,10 +160,11 @@
       cursor: pointer;
       font-size: 18px;
       line-height: 1;
+      opacity: .7;
       padding: 0px 4px;
     }
     .scaler-btn:hover {
-      opacity: 0.8;
+      opacity: 1;
     }
     .scaler-text {
       background: rgba(255,255,255,.1);
@@ -178,18 +178,48 @@
       min-width: 32px;
       padding: 1px 2px 0px 0px;
     }
+    .ClockThemeToggle,
+    .ClockSecondToggle,
+    .scaler-info,
+    .scaler-reset {
+      color: #ffffff;
+      opacity: .7;
+    }
+    .ClockThemeToggle:hover,
+    .ClockSecondToggle:hover,
+    .scaler-info:hover,
+    .scaler-reset:hover {
+      opacity: 1;
+    }
+    #spacer3 {
+      color: #666;
+      opacity: 1;
+      pointer-events: none;
+      text-align: center;
+    }
+    #spacer3 {
+      margin: 0px 6px 0px 0px;
+    }
+    #spacer4 {
+      margin: 0px 0px 0px 6px;
+    }
     .Analog-Info {
       align-items: center;
       background: #34495e;
       border-radius: 0px 0px 8px 8px;
       display: inline-flex;
-      gap: 12px;
-      height: 35px;
       justify-content: center;
       margin-top: -6px;
-      padding-top: 0px;
+      padding: 8px 0px 2px 0px;
 	     text-align: center;
-      width: 334px;
+      width: 364px;
+    }
+    .Analog-CalendarText {
+      display: inline-block;
+      color: #fff;
+      font-family: monospace;
+      font-size: 16px;
+      white-space: nowrap;
     }
     .ClockThemeToggle:hover,
     .scaler-reset:hover,
@@ -211,6 +241,20 @@
 <body>
 
 <script>
+  const _aURL = 'https://raw.githubusercontent.com/Razzano/My_Images/master/';
+  const _Icon = {
+    calendar16: _aURL + 'calendar16.png',
+    calendar22: _aURL + 'calendar22.png',
+    calendar32D: _aURL + 'calendar32D.png',
+    clock16: _aURL + 'clock16.png',
+    clock22: _aURL + 'clock22.png',
+    clock22L: _aURL + 'clock22L.png',
+    clock26: _aURL + 'clock26.png',
+    moon16: _aURL + 'moon16.png',
+    moon22: _aURL + 'moon22.png',
+    sun16: _aURL + 'sun16.png',
+    sun22: _aURL + 'sun22.png',
+  };
   const SVG_NS = "http://www.w3.org/2000/svg";
   const SVG_TAGS = new Set([
     "svg","g","path","circle","text","line","rect","polyline","polygon",
@@ -333,14 +377,14 @@
   const DAY_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const MONTH_ABBR = ['Jan.','Feb.','Mar.','Apr.','May','Jun.','Jul.','Aug.','Sep.','Oct.','Nov.','Dec.'];
   const MONTH_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  if (localStorage.getItem('defaultAMPM') === null) {
-    localStorage.setItem('defaultAMPM', 'true');
-  }
   // ============ Analog Clock ============
   const getClock = () => {
     if (document.getElementById('analogClockContainer')) return;
+    const smoothSecondHand = localStorage.getItem('smoothSecondHand') !== 'false';
+	localStorage.setItem('smoothSecondHand', smoothSecondHand);
     const ticks = [];
     const hourNumbers = [];
+    const spacer3 = $el('span', {id: 'spacer3', class: 'spacerX', textContent: '|'});
     for (let i = 0; i < 60; i++) {
       const angleDeg = i * 6 - 90;
       const rad = angleDeg * Math.PI / 180;
@@ -366,8 +410,8 @@
       const radius = 37;
       hourNumbers.push($el('text', {
         className: 'Analog-Number',
-        x: (50 + radius * Math.cos(rad)).toFixed(3),
-        y: (48 + radius * Math.sin(rad) + 2.8).toFixed(3),
+        x: 50 + radius * Math.cos(rad),
+        y: 50.8 + radius * Math.sin(rad),
         textContent: hour,
         'text-anchor': 'middle',
         'dominant-baseline': 'middle'
@@ -379,7 +423,7 @@
     const ampmBorder = $el('rect', {
       className: 'Analog-AMPMBorder',
       x: 44,
-      y: 74,
+      y: 75,
       width: 12,
       height: 7,
       rx: 2,
@@ -388,7 +432,7 @@
     const ampmText = $el('text', {
       className: 'Analog-AMPMText',
       x: 45,
-      y: 80,
+      y: 81,
       textAnchor: 'middle',
       dominantBaseline: 'middle'
     });
@@ -436,25 +480,63 @@
       percentageDisplay.value = String(currentPercent);
       localStorage.setItem('clockSizePercent', currentPercent);
     };
-	const clockInfo = $el( 'div', {
-	  className: 'Analog-Info' },
-      calendarText
-    );
+    const moonImg = $el('img', {
+      id: 'moonImg',
+      src: _Icon.moon22
+    });
     const themeBtn = $el('button', {
       className: 'ClockThemeToggle',
-      title: 'Light/Dark Analog Clock Theme'
-    });
-    const setTheme = (dark) => {
+      title: 'Toggle Between Dark/Light Theme'
+    }, moonImg);
+    const applyTheme = (dark) => {
       Clock.classList.toggle('dark', dark);
-      themeBtn.textContent = dark ? '☀️ Light' : '🌙 Dark';
-      localStorage.setItem('clockDarkTheme', dark);
+      moonImg.src = dark ? _Icon.sun22 : _Icon.moon22;
     };
-    setTheme(localStorage.getItem('clockDarkTheme', true));
+    applyTheme(localStorage.getItem('clockDarkTheme') === 'true');
     themeBtn.onclick = () => {
-      setTheme(!Clock.classList.contains('dark'));
+      const dark = !Clock.classList.contains('dark');
+      applyTheme(dark);
+      localStorage.setItem('clockDarkTheme', String(dark));
     };
+    const darkTheme = localStorage.getItem('clockDarkTheme') === 'true';
+    applyTheme(darkTheme);
+    const clockImg = $el('img', {
+      id: 'clockImg',
+      src: _Icon.clock22L
+    });
+    const secondHandBtn = $el('button', {
+      className: 'ClockSecondToggle',
+      title: 'Toggle Between Smooth/Tick Second Hand Movement'
+    }, clockImg);
+    const setSecondMode = (smooth) => {
+      localStorage.setItem('smoothSecondHand', smooth);
+    };
+    secondHandBtn.onclick = () => {
+      const smooth = localStorage.getItem('smoothSecondHand') === 'true';
+      localStorage.setItem('smoothSecondHand', String(!smooth));
+      location.reload();
+    };
+    const calendarImg = $el('img', {
+      id: 'calendarImg',
+      src: _Icon.calendar22
+    });
+    const clockInfo = $el( 'div', {
+	     className: 'Analog-Info' },
+      calendarText
+    );
+    const calendarBtn = $el('button', {
+      className: 'scaler-info',
+      title: 'Show/Hide Calendar Info',
+      onclick() {
+        clockInfo.classList.toggle('hidden');
+        localStorage.setItem('calendarInfo', !clockInfo.classList.contains('hidden'));
+      }
+    }, calendarImg);
     const scalerControls = $el('div', { className: 'scaler-controls' },
       themeBtn,
+      secondHandBtn,
+      calendarBtn,
+      spacer3,
       $el('button', {
         className: 'scaler-reset',
         textContent: 'Reset',
@@ -473,19 +555,11 @@
         textContent: '+',
         title: 'Scale Up In 5% Increments',
         onclick: () => setClockPercentage(currentPercent + 5)
-      }),
-      $el('button', {
-      className: 'scaler-info',
-      textContent: '📅 Date',
-      title: 'Show/Hide Date Info',
-      onclick() {
-        clockInfo.classList.toggle('hidden');
-        localStorage.setItem('calendarInfo', !clockInfo.classList.contains('hidden'));
-      }})
+      })
     );
-    const savedPercent = localStorage.getItem('clockSizePercent', 100);
+    const savedPercent = parseInt(localStorage.getItem('clockSizePercent'), 10) || 100;
     setClockPercentage(savedPercent);
-	   const controlsRow = $el(
+	const controlsRow = $el(
       'div',
       { className: 'ControlsRow' },
       scalerControls
@@ -514,42 +588,46 @@
       const ordinal = dt + suffix;
       const h12 = String(now.getHours() % 12 || 12);
       const min = String(now.getMinutes()).padStart(2, '0');
-      const seconds = now.getSeconds() + now.getMilliseconds() / 1000;
+      const seconds = smoothSecondHand ? now.getSeconds() + now.getMilliseconds() / 1000 : now.getSeconds();
       const secondDeg = seconds * 6;
+      const minuteDeg = now.getMinutes() * 6 + seconds * 0.1;
+      const hourDeg = (now.getHours() % 12) * 30 + now.getMinutes() * 0.5 + seconds * (0.5 / 60);
       let targetDeg = secondDeg;
       if (targetDeg < displayedSecondDeg - 180) targetDeg += 360;
       displayedSecondDeg = targetDeg;
-      const minuteDeg = now.getMinutes() * 6 + seconds * 0.1;
-      const hourDeg = (now.getHours() % 12) * 30 + now.getMinutes() * 0.5 + seconds * (0.5 / 60);
       Clock.style.setProperty('--secondDeg', `${displayedSecondDeg}deg`);
       Clock.style.setProperty('--minuteDeg', `${minuteDeg}deg`);
       Clock.style.setProperty('--hourDeg', `${hourDeg}deg`);
       ampmText.textContent = now.getHours() < 12 ? 'AM' : 'PM';
       calendarText.textContent = `${dayFull} ⇒ ${monthFull} ${ordinal}, ${yr}\u3000${h12}:${min}`;
     };
-    const showCalendarInfo = localStorage.getItem('calendarInfo', false);
+    if (smoothSecondHand) {
+      const tick = () => {
+        updateClock();
+        requestAnimationFrame(tick);
+      };
+      tick();
+    } else {
+      updateClock();
+      setInterval(updateClock, 1000);
+    }
+    const showCalendarInfo = localStorage.getItem('calendarInfo');
     if (!showCalendarInfo) {
       clockInfo.classList.add('hidden');
     }
-    const tick = () => {
-      updateClock();
-      requestAnimationFrame(tick);
-    };
-    tick();
-    updateClock();
   };
   const init = () => {
     document.removeEventListener('DOMContentLoaded', init);
 	getClock();
   };
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && localStorage.getItem('analogClock', true)) {
+    if (!document.hidden && localStorage.getItem('analogClock')) {
       if (!document.getElementById('analogClockContainer')) {
         getClock();
     } }
   });
   window.addEventListener('pageshow', () => {
-    if (localStorage.getItem('analogClock', true) && !document.getElementById('analogClockContainer')) {
+    if (localStorage.getItem('analogClock') && !document.getElementById('analogClockContainer')) {
       getClock();
     }
   });
@@ -561,4 +639,3 @@
 </script>
 </body>
 </html>
-
