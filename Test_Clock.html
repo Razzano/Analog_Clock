@@ -116,11 +116,12 @@
     }
     .scaler-controls {
       align-items: center;
-      background: #34495e;
+      background: #2A3A4B;
       border: none;
       border-radius: 8px;
+      cursor: default;
       display: flex;
-      gap: 16px;
+      gap: 12px;
       height: 32px;
       justify-content: center;
       margin-top: 4px;
@@ -129,8 +130,9 @@
     }
     .ClockThemeToggle,
     .ClockSecondToggle,
-    .scaler-info {
-	  background: none;
+    .scaler-info,
+    .am-pm {
+	  background: transparent;
       border: none;
       cursor: pointer;
       margin: 0px;
@@ -181,6 +183,7 @@
     .ClockThemeToggle,
     .ClockSecondToggle,
     .scaler-info,
+    .am-pm,
     .scaler-reset {
       color: #ffffff;
       opacity: .7;
@@ -188,25 +191,23 @@
     .ClockThemeToggle:hover,
     .ClockSecondToggle:hover,
     .scaler-info:hover,
+    .am-pm:hover,
     .scaler-reset:hover {
+      cursor: pointer;
       opacity: 1;
     }
     #spacer3 {
       color: #666;
+	  margin: 0px 6px 0px 0px;
       opacity: 1;
       pointer-events: none;
       text-align: center;
     }
-    #spacer3 {
-      margin: 0px 6px 0px 0px;
-    }
-    #spacer4 {
-      margin: 0px 0px 0px 6px;
-    }
     .Analog-Info {
       align-items: center;
-      background: #34495e;
+      background: #2A3A4B;
       border-radius: 0px 0px 8px 8px;
+      cursor: default;
       display: inline-flex;
       justify-content: center;
       margin-top: -6px;
@@ -243,6 +244,7 @@
 <script>
   const _aURL = 'https://raw.githubusercontent.com/Razzano/My_Images/master/';
   const _Icon = {
+    ampm22: _aURL + 'AMPM2.png',
     calendar16: _aURL + 'calendar16.png',
     calendar22: _aURL + 'calendar22.png',
     calendar32D: _aURL + 'calendar32D.png',
@@ -455,6 +457,9 @@
       $el('circle', { className: 'Analog-CenterCutout', cx: 50, cy: 50, r: 3 })
     );
     const Clock = $el('div', { className: 'Analog-Bigclock' }, svg);
+	const ampmView = localStorage.getItem('ampmView') === 'true';
+    ampmBorder.style.display = ampmView ? '' : 'none';
+    ampmText.style.display = ampmView ? '' : 'none';
     const BASE_SIZE = 314;
     let currentPercent = 100;
     const percentageDisplay = $el('input', {
@@ -532,10 +537,26 @@
         localStorage.setItem('calendarInfo', !clockInfo.classList.contains('hidden'));
       }
     }, calendarImg);
+	const ampmImg = $el('img', {
+      id: 'ampmImg',
+      src: _Icon.ampm22
+    });
+    const ampmBtn = $el('button', {
+      className: 'am-pm',
+      title: 'Show/Hide Clock AMPM',
+      onclick() {
+        const current = localStorage.getItem('ampmView') === 'true';
+        const visible = !current;
+        ampmBorder.style.display = visible ? '' : 'none';
+        ampmText.style.display = visible ? '' : 'none';
+        localStorage.setItem('ampmView', String(visible));
+      }
+    }, ampmImg);
     const scalerControls = $el('div', { className: 'scaler-controls' },
       themeBtn,
       secondHandBtn,
       calendarBtn,
+	  ampmBtn,
       spacer3,
       $el('button', {
         className: 'scaler-reset',
