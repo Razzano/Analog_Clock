@@ -21,6 +21,7 @@
   // ============ Helpers ============
   const _aURL = 'https://raw.githubusercontent.com/Razzano/My_Images/master/';
   const _Icon = {
+    ampm22: _aURL + 'AMPM2.png',
     calendar16: _aURL + 'calendar16.png',
     calendar22: _aURL + 'calendar22.png',
     calendar32D: _aURL + 'calendar32D.png',
@@ -152,8 +153,11 @@
   const MONTH_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
   // ============ Analog Clock ============
-  const getClock = () => {
+  const getAnalogClock = () => {
     if (!GM_getValue('analogClock', true)) return;
+	   let displayedSecondDeg = 0;
+    let analogAnimationId = null;
+    let analogIntervalId = null;
     const smoothSecondHand = GM_getValue('smoothSecondHand', true);
     const ticks = [];
     const hourNumbers = [];
@@ -228,6 +232,9 @@
       $el('circle', { className: 'Analog-CenterCutout', cx: 50, cy: 50, r: 3 })
     );
     const Clock = $el('div', { className: 'Analog-Bigclock' }, svg);
+    const ampmView = GM_getValue('ampmView', true);
+    ampmBorder.style.display = ampmView ? '' : 'none';
+    ampmText.style.display = ampmView ? '' : 'none';
     const BASE_SIZE = 314;
     let currentPercent = 100;
     const percentageDisplay = $el('input', {
@@ -282,16 +289,16 @@
       GM_setValue('smoothSecondHand', smooth);
     };
     setSecondMode(GM_getValue('smoothSecondHand', true));
-    secondHandBtn.onclick = () => {
-      setSecondMode(!GM_getValue('smoothSecondHand', true));
-      location.reload();
+	  secondHandBtn.onclick = () => {
+      GM_setValue('smoothSecondHand', !GM_getValue('smoothSecondHand', true));
+      startAnalogClock();
     };
     const calendarImg = $el('img', {
       id: 'calendarImg',
       src: _Icon.calendar22
     });
     const clockInfo = $el( 'div', {
-	     className: 'Analog-Info' },
+	  className: 'Analog-Info' },
       calendarText
     );
     const calendarBtn = $el('button', {
@@ -302,10 +309,25 @@
         GM_setValue('calendarInfo', !clockInfo.classList.contains('hidden'));
       }
     }, calendarImg);
+    const ampmImg = $el('img', {
+      id: 'ampmImg',
+      src: _Icon.ampm22
+    });
+    const ampmBtn = $el('button', {
+      className: 'am-pm',
+      title: 'Show/Hide Clock AMPM',
+      onclick() {
+        const visible = !GM_getValue('ampmView', true);
+        ampmBorder.style.display = visible ? '' : 'none';
+        ampmText.style.display = visible ? '' : 'none';
+        GM_setValue('ampmView', visible);
+      }
+    }, ampmImg);
     const scalerControls = $el('div', { className: 'scaler-controls' },
       themeBtn,
       secondHandBtn,
       calendarBtn,
+      ampmBtn,
       spacer3,
       $el('button', {
         className: 'scaler-reset',
@@ -329,7 +351,7 @@
     );
     const savedPercent = GM_getValue('clockSizePercent', 100);
     setClockPercentage(savedPercent);
-	   const controlsRow = $el(
+	const controlsRow = $el(
       'div',
       { className: 'ControlsRow' },
       scalerControls
@@ -349,42 +371,58 @@
       container.style.top = '20px';
     }
     document.body.appendChild(container);
-    let displayedSecondDeg = 0;
     const updateClock = () => {
+      const smoothSecondHand = GM_getValue('smoothSecondHand', true);
       const now = new Date();
+      const seconds = smoothSecondHand ? now.getSeconds() + now.getMilliseconds() / 1000 : now.getSeconds();
+      const secondDeg = seconds * 6;
+      const minuteDeg = now.getMinutes() * 6 + seconds * 0.1;
+      const hourDeg = (now.getHours() % 12) * 30 + now.getMinutes() * 0.5 + seconds * (0.5 / 60);
+	  let targetDeg = secondDeg;
+      if (targetDeg < displayedSecondDeg - 180) targetDeg += 360;
+      displayedSecondDeg = targetDeg;
+      Clock.style.setProperty('--secondDeg', `${displayedSecondDeg}deg`);
+      Clock.style.setProperty('--minuteDeg', `${minuteDeg}deg`);
+      Clock.style.setProperty('--hourDeg', `${hourDeg}deg`);
       const dy = now.getDay(), dt = now.getDate(), mth = now.getMonth(), yr = now.getFullYear();
       const dayAbbr = DAY_ABBR[dy], dayFull = DAY_FULL[dy], monthAbbr = MONTH_ABBR[mth], monthFull = MONTH_FULL[mth];
       const suffix = ['th', 'st', 'nd', 'rd'][(dt % 10 > 3 || Math.floor(dt / 10) === 1 ? 0 : dt % 10)] || 'th';
       const ordinal = dt + suffix;
       const h12 = String(now.getHours() % 12 || 12);
       const min = String(now.getMinutes()).padStart(2, '0');
-      const seconds = smoothSecondHand ? now.getSeconds() + now.getMilliseconds() / 1000 : now.getSeconds();
-      const secondDeg = seconds * 6;
-      const minuteDeg = now.getMinutes() * 6 + seconds * 0.1;
-      const hourDeg = (now.getHours() % 12) * 30 + now.getMinutes() * 0.5 + seconds * (0.5 / 60);
-      let targetDeg = secondDeg;
-      if (targetDeg < displayedSecondDeg - 180) targetDeg += 360;
-      displayedSecondDeg = targetDeg;
-      Clock.style.setProperty('--secondDeg', `${displayedSecondDeg}deg`);
-      Clock.style.setProperty('--minuteDeg', `${minuteDeg}deg`);
-      Clock.style.setProperty('--hourDeg', `${hourDeg}deg`);
       ampmText.textContent = now.getHours() < 12 ? 'AM' : 'PM';
       calendarText.textContent = `${dayFull} ⇒ ${monthFull} ${ordinal}, ${yr}\u3000${h12}:${min}`;
     };
-    if (smoothSecondHand) {
-      const tick = () => {
-        updateClock();
-        requestAnimationFrame(tick);
-      };
-      tick();
-    } else {
-      updateClock();
-      setInterval(updateClock, 1000);
-    }
-    const showCalendarInfo = GM_getValue('calendarInfo', false);
+	const showCalendarInfo = GM_getValue('calendarInfo', false);
     if (!showCalendarInfo) {
       clockInfo.classList.add('hidden');
     }
+	const stopAnalogClock = () => {
+      if (analogAnimationId) {
+        cancelAnimationFrame(analogAnimationId);
+        analogAnimationId = null;
+      }
+      if (analogIntervalId) {
+        clearInterval(analogIntervalId);
+        analogIntervalId = null;
+      }
+    };
+    const startAnalogClock = () => {
+      stopAnalogClock();
+	  displayedSecondDeg = 0;
+      const smooth = GM_getValue('smoothSecondHand', true);
+      if (smooth) {
+        const tick = () => {
+          updateClock();
+          analogAnimationId = requestAnimationFrame(tick);
+        };
+        tick();
+      } else {
+        updateClock();
+        analogIntervalId = setInterval(updateClock, 1000);
+      }
+    };
+	startAnalogClock();
   };
 
 
@@ -395,19 +433,19 @@
     const body = document.body;
     if (!body) return;
     const clock = $id('analogClockContainer');
-    getClock();
+    getAnalogClock();
   };
 
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden && GM_getValue('analogClock', true)) {
       if (!$id('analogClockContainer')) {
-        getClock();
+        getAnalogClock();
     } }
   });
 
   window.addEventListener('pageshow', () => {
     if (GM_getValue('analogClock', true) && !$id('analogClockContainer')) {
-      getClock();
+      getAnalogClock();
     }
   });
 
@@ -510,7 +548,7 @@
       stroke: #2c3e50;
     }
     .Analog-AMPMText {
-      fill: #0078d7;
+      fill: #2A3A4B;
       font-size: 7px;
       font-weight: 300;
     }
@@ -519,23 +557,24 @@
     }
     .Analog-AMPMBorder {
       fill: none;
-      stroke: #0078d7;
+      stroke: #2A3A4B;
       stroke-width: 0.25;
     }
     .Analog-Bigclock.dark .Analog-AMPMBorder {
       fill: none;
-      stroke: #0078d7;
+      stroke: #2A3A4B;
       stroke-width: 0.25;
     }
     .ControlsRow {
     }
     .scaler-controls {
       align-items: center;
-      background: #34495e;
+      background: #2A3A4B;
       border: none;
       border-radius: 8px;
+      cursor: default;
       display: flex;
-      gap: 16px;
+      gap: 12px;
       height: 32px;
       justify-content: center;
       margin-top: 4px;
@@ -544,8 +583,9 @@
     }
     .ClockThemeToggle,
     .ClockSecondToggle,
-    .scaler-info {
-	  background: none;
+    .scaler-info,
+    .am-pm {
+	  background: transparent;
       border: none;
       cursor: pointer;
       margin: 0px;
@@ -596,6 +636,7 @@
     .ClockThemeToggle,
     .ClockSecondToggle,
     .scaler-info,
+    .am-pm,
     .scaler-reset {
       color: #ffffff;
       opacity: .7;
@@ -603,25 +644,28 @@
     .ClockThemeToggle:hover,
     .ClockSecondToggle:hover,
     .scaler-info:hover,
+    .am-pm:hover,
     .scaler-reset:hover {
+      cursor: pointer;
       opacity: 1;
     }
     #spacer3 {
       color: #666;
-	  margin: 0px 6px 0px 0px;
+      margin: 0px 6px 0px 0px;
       opacity: 1;
       pointer-events: none;
       text-align: center;
     }
     .Analog-Info {
       align-items: center;
-      background: #34495e;
+      background: #2A3A4B;
       border-radius: 0px 0px 8px 8px;
+      cursor: default;
       display: inline-flex;
       justify-content: center;
       margin-top: -6px;
       padding: 8px 0px 2px 0px;
-	  text-align: center;
+	     text-align: center;
       width: 364px;
     }
     .Analog-CalendarText {
