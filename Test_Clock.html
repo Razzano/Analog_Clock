@@ -125,7 +125,7 @@
       height: 32px;
       justify-content: center;
       margin-top: 4px;
-      padding: 0px;
+      padding: 0px 0px 2px 0px;
       width: 364px;
     }
     .ClockThemeToggle,
@@ -211,8 +211,8 @@
       display: inline-flex;
       justify-content: center;
       margin-top: -6px;
-      padding: 8px 0px 2px 0px;
-	     text-align: center;
+      padding: 6px 0px 2px 0px;
+	  text-align: center;
       width: 364px;
     }
     .Analog-CalendarText {
@@ -296,11 +296,7 @@
     } }
     children.flat(Infinity).forEach(child => {
       if (child == null) return;
-      el.appendChild(
-        child instanceof Node
-          ? child
-          : document.createTextNode(child)
-      );
+      el.appendChild(child instanceof Node ? child : document.createTextNode(child));
     });
     return el;
   };
